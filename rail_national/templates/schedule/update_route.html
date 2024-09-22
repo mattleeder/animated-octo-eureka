@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block header %}
+    <h1>{% block title %}Edit "{{ route["route_id"] }}" {% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        <label for="route_id">Route ID</label>
+        <input name="route_id" id="route_id" value="{{ route['route_id'] }}" readonly>
+        <label for="origin_stn">Origin Station</label>
+        <input name="origin_stn" id="origin_stn" value="{{ request.form['origin_stn'] or route['origin_stn'] }}" required>
+        <label for="destn_stn">Destination Station</label>
+        <input name="destn_stn" id="destn_stn" value="{{ request.form['destn_stn'] or route['destn_stn'] }}" required>
+        <label for="stop_stn">Stop Station</label>
+        <input name="stop_stn" id="stop_stn" value="{{ request.form['stop_stn'] or route['stop_stn'] }}" required>
+        <label for="origin_dep_time">Origin Departure Time</label>
+        <input name="origin_dep_time" id="origin_dep_time" value="{{ request.form['origin_dep_time'] or route['origin_dep_time'] }}" required>
+        <label for="destn_arr_time">Destination Departure Time</label>
+        <input name="destn_arr_time" id="destn_arr_time" value="{{ request.form['destn_arr_time'] or route['destn_arr_time'] }}" required>
+        <label for="stop_time">Stop Time</label>
+        <input name="stop_time" id="stop_time" value="{{ request.form['stop_time'] or route['stop_time'] }}" required>
+        <label for="cancelled">Cancelled?</label>
+        {% if route["cancelled"] == 0 %}
+            <input type="checkbox" name="stop_time" id="stop_time" required>
+        {% else %}
+            <input type="checkbox" name="stop_time" id="stop_time" checked="checked" required>
+        {% endif %}
+    </form>
+    <hr>
+    <form action="{{ url_for('schedule.delete', id = route['route_id']) }}" method="post">
+        <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+    </form>
+{% endblock %}

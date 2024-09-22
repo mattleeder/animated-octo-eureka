@@ -1,0 +1,11 @@
+[project]
+name = "rail_national"
+version = "1.0.0"
+description = "National rail clone."
+dependencies = [
+    "flask",
+]
+
+[build-system]
+requires = ["flit_core<4"]
+build-backend = "flit_core.buildapi"
