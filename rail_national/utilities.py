@@ -1,5 +1,5 @@
-import time
 import sqlite3
+from datetime import datetime
 
 def make_time_readable(data: sqlite3.Row | list[sqlite3.Row], cols: list[str]):
     if isinstance(data, list):
@@ -13,7 +13,8 @@ class ValidationError(Exception):
 
 class Validators():
 
-    def validate_stn(s: bytes) -> bool:
+    @staticmethod
+    def validate_stn(s: str) -> None:
         # Must be string of length 3
         # Must only contain char
         # Must be in station database??
@@ -27,9 +28,14 @@ class Validators():
             errors.append(f"'{s}' contains non-alphabetic characters")
         if not valid:
             raise ValidationError(f"'{s}' is not a valid station", errors)
+        
+    @staticmethod
+    def validate_time(s: str, time_format: str) -> None:
+        try:
+            datetime.strptime(s, time_format)
+        except ValueError as e:
+            raise ValidationError(f"{s} is not a valid time for the format {time_format}", e)
 
-    def validate_time(s: bytes, format: str):
-        pass
-
-    def validate_cancelled(s: bytes):
+    @staticmethod
+    def validate_cancelled(s: str):
         pass

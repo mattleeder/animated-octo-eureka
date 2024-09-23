@@ -6,6 +6,8 @@ from werkzeug.exceptions import abort
 from rail_national.auth import login_required
 from rail_national.db import get_db
 
+from . import utilities
+
 bp = Blueprint("schedule", __name__)
 
 def get_route(route_id, check_permissions = True):
@@ -75,6 +77,22 @@ def add_route():
 
         if not stop_time:
             errors.append("Stop Time is Required")
+
+
+        try:
+            utilities.Validators.validate_time(origin_dep_time, "%Y-%m-%d %H:%M")
+        except utilities.ValidationError:
+            errors.append(f"Origin Departure Time {origin_dep_time} is invalid.")
+
+        try:
+            utilities.Validators.validate_time(destn_arr_time, "%Y-%m-%d %H:%M")
+        except utilities.ValidationError:
+            errors.append(f"Origin Departure Time {destn_arr_time} is invalid.")
+
+        try:
+            utilities.Validators.validate_time(stop_time, "%Y-%m-%d %H:%M")
+        except utilities.ValidationError:
+            errors.append(f"Origin Departure Time {stop_time} is invalid.")
 
         if len(errors) == 0:
             try:
