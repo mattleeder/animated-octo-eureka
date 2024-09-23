@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
 {% block header %}
-    <h1>{ % block title %}Add Route{% endblock %}</h1>
+    <h1>{% block title %}Add Route{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
     <form method="post">
-        <label for="route">Route ID</label>
-        <input name="route" id="route" value="{{ request.form['route_id'] }}" required>
+        <label for="route_id">Route ID</label>
+        <input name="route_id" id="route_id" value="{{ request.form['route_id'] }}" required>
         <label for="origin_stn">Origin Station</label>
         <input name="origin_stn" id="origin_stn" value="{{ request.form['origin_stn'] }}" required>
         <label for="destn_stn">Destination Station</label>
@@ -20,6 +20,7 @@
         <input name="destn_arr_time" id="destn_arr_time" value="{{ request.form['destn_arr_time'] }}" required>
         <label for="stop_time">Stop Time</label>
         <input name="stop_time" id="stop_time" value="{{ request.form['stop_time'] }}" required>
+        <input type="submit" value="Save">
     </form>
 {% endblock %}
         

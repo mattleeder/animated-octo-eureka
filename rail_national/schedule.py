@@ -9,15 +9,15 @@ from rail_national.db import get_db
 bp = Blueprint("schedule", __name__)
 
 def get_route(route_id, check_permissions = True):
-    route = get_db().execute(
-        "SELECT route_id, origin_stn, destn_stn, stop_stn, origin_dep_time, destn_arr_time, stop_time"
-        "  FROM schedule"
-        " WHERE route_id = ?",
+    route = get_db().execute("""
+        SELECT *
+          FROM schedule
+         WHERE route_id = ?""",
         (route_id,)
     ).fetchone()
 
     if route is None:
-        abort(404, f"Route id {route_id} doesn't exists.")
+        abort(404, f"Route id {route_id} doesn't exist.")
 
     if check_permissions:
         abort(403)
@@ -27,11 +27,18 @@ def get_route(route_id, check_permissions = True):
 @bp.route("/")
 def index():
     db = get_db()
-    schedule = db.execute(
-        "SELECT *"
-        "FROM schedule"
-        "ORDER BY origin_dep_time"
-    ).fetchall()
+    schedule = db.execute("""
+        SELECT route_id, 
+               origin_stn,
+               destn_stn, 
+               stop_stn, 
+               strftime('%Y-%m-%d %H:%M', DATETIME(origin_dep_time, 'unixepoch')) as origin_dep_time, 
+               strftime('%Y-%m-%d %H:%M', DATETIME(destn_arr_time, 'unixepoch')) as destn_arr_time, 
+               strftime('%Y-%m-%d %H:%M', DATETIME(stop_time, 'unixepoch')) as stop_time,
+               cancelled
+        FROM schedule
+        ORDER BY origin_dep_time DESC
+    """).fetchall()
     return render_template("schedule/index.html", schedule = schedule)
 
 @bp.route("/add_route", methods = ("GET", "POST"))
@@ -46,7 +53,7 @@ def add_route():
         destn_arr_time = request.form["destn_arr_time"]
         stop_time = request.form["stop_time"]
         cancelled = 0
-        errors = None
+        errors = []
 
         if not route_id:
             errors.append("Route ID is required.")
@@ -69,17 +76,23 @@ def add_route():
         if not stop_time:
             errors.append("Stop Time is Required")
 
-        if errors is None:
+        if len(errors) == 0:
             try:
                 db = get_db()
-                db.execute(
-                    "INSERT INTO schedule (route_id, origin_stn, destn_stn, stop_stn, origin_dep_time, destn_arr_time, stop_time, cancelled)"
-                    " VALUES (?, ?, ?, ?, ?, ?, ?)",
+                db.execute("""
+                    INSERT INTO schedule (route_id, origin_stn, destn_stn, stop_stn, origin_dep_time, destn_arr_time, stop_time, cancelled)
+                     VALUES (?, ?, ?, ?, unixepoch(?), unixepoch(?), unixepoch(?), ?)""",
                     (route_id, origin_stn, destn_stn, stop_stn, origin_dep_time, destn_arr_time, stop_time, cancelled)
                 )
                 db.commit()
-            except db.IntegrityError:
-                errors.append(f"Route ID {route_id} already exists.")
+            except db.IntegrityError as e:
+                match e.sqlite_errorcode:
+                    case 20:
+                        errors.append(f"Route ID '{route_id}' must be an integer.")
+                    case 1555:
+                        errors.append(f"Route ID '{route_id}' already exists.")
+                    case _:
+                        errors.append(f"Operation Failed")
             else:
                 return redirect(url_for("schedule.index"))
             
@@ -124,9 +137,9 @@ def update_route(route_id):
             errors.append("Stop Time is Required")
 
         db = get_db()
-        db.execute(
-            "UPDATE schedule SET origin_stn = ?, destn_stn = ?, stop_stn = ?, origin_dep_time = ?, destn_arr_time = ?, stop_time = ?, cancelled = ?"
-            " WHERE route_id = ?",
+        db.execute("""
+            UPDATE schedule SET origin_stn = ?, destn_stn = ?, stop_stn = ?, origin_dep_time = unixepoch(?), destn_arr_time = unixepoch(?), unixepoch(stop_time) = ?, cancelled = ?
+             WHERE route_id = ?""",
             (origin_stn, destn_stn, stop_stn, origin_dep_time, destn_arr_time, stop_time, cancelled, route_id)
         )
         db.commit()

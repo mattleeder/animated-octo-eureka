@@ -4,7 +4,6 @@
     <h1>{% block title %}Schedule{% endblock %}</h1>
     {% if g.user %}
         <a class="action" href="{{ url_for('schedule.add_route') }}">Add Route</a>
-        <a class="action" href="{{ url_for('schedule.update_route') }}">Change Route</a>
     {% endif %}
 {% endblock %}
 
@@ -22,14 +21,14 @@
             </tr>
             {% for route in schedule %}
                 <tr>
-                    <th>route["route_id"]</th>
-                    <th>route["origin_stn"]</th>
-                    <th>route["destn_stn"]</th>
-                    <th>route["stop_stn"]</th>
-                    <th>route["origin_dep_time"]</th>
-                    <th>route["destn_arr_time"]</th>
-                    <th>route["stop_time"]</th>
-                    <th>route["cancelled"]</th>
+                    <th>{{ route["route_id"] }}</th>
+                    <th>{{ route["origin_stn"] }}</th>
+                    <th>{{ route["destn_stn"] }}</th>
+                    <th>{{ route["stop_stn"] }}</th>
+                    <th>{{ route["origin_dep_time"] }}</th>
+                    <th>{{ route["destn_arr_time"] }}</th>
+                    <th>{{ route["stop_time"] }}</th>
+                    <th>{{ route["cancelled"] }}</th>
                 </tr>
             {% endfor %}
         </table>
