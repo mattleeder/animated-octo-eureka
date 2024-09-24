@@ -2,6 +2,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
 )
 from werkzeug.exceptions import abort
+from datetime import datetime
 
 from rail_national.auth import login_required
 from rail_national.db import get_db
@@ -37,7 +38,10 @@ def index():
                strftime('%Y-%m-%d %H:%M', DATETIME(origin_dep_time, 'unixepoch')) as origin_dep_time, 
                strftime('%Y-%m-%d %H:%M', DATETIME(destn_arr_time, 'unixepoch')) as destn_arr_time, 
                strftime('%Y-%m-%d %H:%M', DATETIME(stop_time, 'unixepoch')) as stop_time,
-               cancelled
+               CASE cancelled 
+                    WHEN 1 THEN 'YES'
+                    WHEN 0 THEN 'NO'
+                END as cancelled
         FROM schedule
         ORDER BY origin_dep_time DESC
     """).fetchall()
@@ -56,6 +60,8 @@ def add_route():
         stop_time = request.form["stop_time"]
         cancelled = 0
         errors = []
+
+        # Check required
 
         if not route_id:
             errors.append("Route ID is required.")
@@ -78,21 +84,58 @@ def add_route():
         if not stop_time:
             errors.append("Stop Time is Required")
 
+        
+        # Validate Inputs
 
         try:
-            utilities.Validators.validate_time(origin_dep_time, "%Y-%m-%d %H:%M")
+            utilities.Validators.validate_route_id(route_id)
         except utilities.ValidationError:
-            errors.append(f"Origin Departure Time {origin_dep_time} is invalid.")
+            errors.append(f"Route ID '{route_id}' is invalid.")
 
         try:
-            utilities.Validators.validate_time(destn_arr_time, "%Y-%m-%d %H:%M")
+            utilities.Validators.validate_stn(origin_stn)
         except utilities.ValidationError:
-            errors.append(f"Origin Departure Time {destn_arr_time} is invalid.")
+            errors.append(f"Origin Station '{origin_stn}' is invalid.")
 
         try:
-            utilities.Validators.validate_time(stop_time, "%Y-%m-%d %H:%M")
+            utilities.Validators.validate_stn(destn_stn)
         except utilities.ValidationError:
-            errors.append(f"Origin Departure Time {stop_time} is invalid.")
+            errors.append(f"Destination Station '{destn_stn}' is invalid.")
+
+        try:
+            utilities.Validators.validate_stn(stop_stn)
+        except utilities.ValidationError:
+            errors.append(f"Stop Station '{stop_stn}' is invalid.")
+
+        try:
+            utilities.Validators.validate_time(origin_dep_time, "%Y-%m-%dT%H:%M")
+        except utilities.ValidationError:
+            errors.append(f"Origin Departure Time '{origin_dep_time}' is invalid.")
+
+        try:
+            utilities.Validators.validate_time(destn_arr_time, "%Y-%m-%dT%H:%M")
+        except utilities.ValidationError:
+            errors.append(f"Origin Departure Time '{destn_arr_time}' is invalid.")
+
+        try:
+            utilities.Validators.validate_time(stop_time, "%Y-%m-%dT%H:%M")
+        except utilities.ValidationError:
+            errors.append(f"Origin Departure Time '{stop_time}' is invalid.")
+
+        try:
+            utilities.Validators.validate_cancelled(cancelled)
+        except utilities.ValidationError:
+            errors.append(f"Cancel code '{cancelled}' is invalid.")
+
+
+        # Ensure Times Are Compatible
+
+        if datetime.strptime(origin_dep_time, "%Y-%m-%dT%H:%M") > datetime.strptime(destn_arr_time, "%Y-%m-%dT%H:%M"):
+            errors.append(f"Origin Departure time cannot be later than Destination Arrival time.")
+
+        if datetime.strptime(origin_dep_time, "%Y-%m-%dT%H:%M") > datetime.strptime(stop_time, "%Y-%m-%dT%H:%M"):
+            errors.append(f"Origin Departure time cannot be later than Stop time.")
+
 
         if len(errors) == 0:
             try:

@@ -5,6 +5,10 @@
 {% endblock %}
 
 {% block content %}
+    <script>
+        src="{{ url_for('static', filename = 'js/schedule/add_route.js')}}"
+        type="module"
+    </script>
     <form method="post">
         <label for="route_id">Route ID</label>
         <input name="route_id" id="route_id" value="{{ request.form['route_id'] }}" required>
@@ -15,11 +19,11 @@
         <label for="stop_stn">Stop Station</label>
         <input name="stop_stn" id="stop_stn" value="{{ request.form['stop_stn'] }}" required>
         <label for="origin_dep_time">Origin Departure Time</label>
-        <input name="origin_dep_time" id="origin_dep_time" value="{{ request.form['origin_dep_time'] }}" required>
+        <input type="datetime-local" name="origin_dep_time" id="origin_dep_time" value="{{ request.form['origin_dep_time'] }}" required>
         <label for="destn_arr_time">Destination Departure Time</label>
-        <input name="destn_arr_time" id="destn_arr_time" value="{{ request.form['destn_arr_time'] }}" required>
+        <input type="datetime-local" name="destn_arr_time" id="destn_arr_time" value="{{ request.form['destn_arr_time'] }}" required>
         <label for="stop_time">Stop Time</label>
-        <input name="stop_time" id="stop_time" value="{{ request.form['stop_time'] }}" required>
+        <input type="datetime-local" name="stop_time" id="stop_time" value="{{ request.form['stop_time'] }}" required>
         <input type="submit" value="Save">
     </form>
 {% endblock %}
