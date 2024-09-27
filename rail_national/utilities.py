@@ -1,5 +1,6 @@
 import sqlite3
 from datetime import datetime
+from typing import Union
 
 def make_time_readable(data: sqlite3.Row | list[sqlite3.Row], cols: list[str]):
     if isinstance(data, list):
@@ -14,42 +15,72 @@ class ValidationError(Exception):
 class Validators():
 
     @staticmethod
-    def validate_route_id(s: str):
+    def validate_route_id(data: str, required = True, extra_validators = []) -> Union[str, list[str]]:
         # Must be positive integer
-        valid = True
-        errors = []
-        if not s.isnumeric(s):
-            errors.append(f"'{s}' is non-numeric.")
-        if not int(s) > 0:
-            errors.append(f"'{s}' is negative.")
-        if not valid:
-            raise ValidationError(f"'{s}' is not a valid route ID.", errors)
+        error_messages = []
+        if not data:
+            if required:
+                error_messages.append("Route ID Required.")
+            return data, error_messages
+
+        if data.isnumeric():
+            if not int(data) > 0:
+                error_messages.append(f"'{data}' is negative.")
+        else:
+            error_messages.append(f"'{data}' is non-numeric.")
+        for validator in extra_validators:
+            _, errors = validator(data)
+            error_messages.extend(errors)
+        return data, error_messages
         
 
     @staticmethod
-    def validate_stn(s: str) -> None:
+    def validate_stn(data: str, required = True, extra_validators = []) -> Union[str, list[str]]:
         # Must be string of length 3
         # Must only contain char
         # Must be in station database??
-        valid = True
-        errors = []
-        if len(s) != 3:
-            valid = False
-            errors.append(f"Length is {len(s)} not 3.")
-        if not s.isalpha():
-            valid = False
-            errors.append(f"'{s}' contains non-alphabetic characters.")
-        if not valid:
-            raise ValidationError(f"'{s}' is not a valid station.", errors)
+        error_messages = []
+        if not data:
+            if required:
+                error_messages.append("Station Required.")
+            return data, error_messages
+
+        if len(data) != 3:
+            error_messages.append(f"Length is {len(data)} not 3.")
+        if not data.isalpha():
+            error_messages.append(f"'{data}' contains non-alphabetic characters.")
+        for validator in extra_validators:
+            _, errors = validator(data)
+            error_messages.extend(errors)
+        return data, error_messages
         
     @staticmethod
-    def validate_time(s: str, time_format: str) -> None:
+    def validate_time(data: str, time_format: str, required = True, extra_validators = []) -> Union[str, list[str]]:
+        error_messages = []
+        if not data:
+            if required:
+                error_messages.append("Time required.")
+            return data, error_messages
         try:
-            datetime.strptime(s, time_format)
+            datetime.strptime(data, time_format)
         except ValueError as e:
-            raise ValidationError(f"{s} is not a valid time for the format {time_format}.", e)
+            error_messages.append(f"{data} is not a valid time for the format {time_format}.")
+        for validator in extra_validators:
+            _, errors = validator(data)
+            error_messages.extend(errors)
+        return data, error_messages
 
     @staticmethod
-    def validate_cancelled(s: str):
-        if s != "0" and s != "1":
-            raise ValidationError(f"{s} is not valid cancellation code.", [])
+    def validate_cancelled(data: str, required = True, extra_validators = []) -> Union[str, list[str]]:
+        error_messages = []
+        if not data:
+            if required:
+                error_messages.append("Time required.")
+            return data, error_messages
+        if data != "0" and data != "1":
+            error_messages.append(f"{data} is not valid cancellation code.")
+        
+class CheckValid:
+
+    def __init__(self, form_data, validators = None):
+        self.form_data = form_data
