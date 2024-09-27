@@ -12,7 +12,7 @@ from . import utilities
 
 bp = Blueprint("schedule", __name__)
 
-def get_route(route_id, check_permissions = True):
+def get_route(route_id, check_permissions = False):
     route = query_route(route_id)
 
     if route is None:
