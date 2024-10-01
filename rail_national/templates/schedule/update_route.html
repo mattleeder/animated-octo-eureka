@@ -15,17 +15,18 @@
         <label for="stop_stn">Stop Station</label>
         <input name="stop_stn" id="stop_stn" value="{{ request.form['stop_stn'] or route['stop_stn'] }}" required>
         <label for="origin_dep_time">Origin Departure Time</label>
-        <input name="origin_dep_time" id="origin_dep_time" value="{{ request.form['origin_dep_time'] or route['origin_dep_time'] }}" required>
+        <input type="datetime-local" name="origin_dep_time" id="origin_dep_time" value="{{ request.form['origin_dep_time'] or route['origin_dep_time'] }}" required>
         <label for="destn_arr_time">Destination Departure Time</label>
-        <input name="destn_arr_time" id="destn_arr_time" value="{{ request.form['destn_arr_time'] or route['destn_arr_time'] }}" required>
+        <input type="datetime-local" name="destn_arr_time" id="destn_arr_time" value="{{ request.form['destn_arr_time'] or route['destn_arr_time'] }}" required>
         <label for="stop_time">Stop Time</label>
-        <input name="stop_time" id="stop_time" value="{{ request.form['stop_time'] or route['stop_time'] }}" required>
+        <input type="datetime-local" name="stop_time" id="stop_time" value="{{ request.form['stop_time'] or route['stop_time'] }}" required>
         <label for="cancelled">Cancelled?</label>
         {% if route["cancelled"] == 0 %}
-            <input type="checkbox" name="stop_time" id="stop_time" required>
+            <input type="checkbox" name="cancelled" id="cancelled" value="0">
         {% else %}
-            <input type="checkbox" name="stop_time" id="stop_time" checked="checked" required>
+            <input type="checkbox" name="cancelled" id="cancelled" checked="checked" value="1">
         {% endif %}
+        <input type="submit" value="Save">
     </form>
     <hr>
     <form action="{{ url_for('schedule.delete', route_id = route['route_id']) }}" method="post">

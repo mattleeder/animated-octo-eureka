@@ -31,7 +31,8 @@ class Validators():
         for validator in extra_validators:
             _, errors = validator(data)
             error_messages.extend(errors)
-        return data, error_messages
+        print(data)
+        return [data, error_messages]
         
 
     @staticmethod
@@ -79,6 +80,10 @@ class Validators():
             return data, error_messages
         if data != "0" and data != "1":
             error_messages.append(f"{data} is not valid cancellation code.")
+        for validator in extra_validators:
+            _, errors = validator(data)
+            error_messages.extend(errors)
+        return data, error_messages
         
 class CheckValid:
 

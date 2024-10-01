@@ -1,6 +1,6 @@
 from .db import get_db
 
-def query_route(route_id):
+def get_route(route_id):
     route = get_db().execute("""
         SELECT *
           FROM schedule
@@ -8,6 +8,11 @@ def query_route(route_id):
          (route_id,)
     ).fetchone()
     return route
+
+def count_routes():
+    db = get_db()
+    count = db.execute("SELECT COUNT(route_id) FROM schedule").fetchone()[0]
+    return count
 
 def get_schedule():
     db = get_db()
@@ -52,7 +57,7 @@ def insert_route(route_id, origin_stn, destn_stn, stop_stn, origin_dep_time, des
 def update_route(origin_stn, destn_stn, stop_stn, origin_dep_time, destn_arr_time, stop_time, cancelled, route_id):
     db = get_db()
     db.execute("""
-        UPDATE schedule SET origin_stn = ?, destn_stn = ?, stop_stn = ?, origin_dep_time = unixepoch(?), destn_arr_time = unixepoch(?), unixepoch(stop_time) = ?, cancelled = ?
+        UPDATE schedule SET origin_stn = ?, destn_stn = ?, stop_stn = ?, origin_dep_time = unixepoch(?), destn_arr_time = unixepoch(?), stop_time = unixepoch(?), cancelled = ?
          WHERE route_id = ?""",
             (origin_stn, destn_stn, stop_stn, origin_dep_time, destn_arr_time, stop_time, cancelled, route_id),
         )

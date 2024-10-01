@@ -5,4 +5,5 @@ VALUES
 
 INSERT INTO schedule (route_id, origin_stn, destn_stn, stop_stn, origin_dep_time, destn_arr_time, stop_time, cancelled)
 VALUES
-    (1, "LST", "COL", "SRA", unixepoch("2024-09-22 14:00"), unixepoch("2024-09-22 14:40"), unixepoch("2024-09-22 14:10"), 0);
+    (1, "LST", "COL", "SRA", unixepoch("2024-09-22 14:00"), unixepoch("2024-09-22 14:40"), unixepoch("2024-09-22 14:10"), 0),
+    (2, "COL", "SRA", "LST", unixepoch("2024-09-22 14:00"), unixepoch("2024-09-22 14:40"), unixepoch("2024-09-22 14:10"), 0);

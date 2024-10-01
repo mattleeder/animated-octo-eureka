@@ -6,6 +6,24 @@ import pytest
 from rail_national import create_app
 from rail_national.db import get_db, init_db
 
+# conftest.py
+import sys
+import pytest
+
+def is_debugging():
+    return 'debugpy' in sys.modules
+    
+    
+# enable_stop_on_exceptions if the debugger is running during a test
+if is_debugging():
+    @pytest.hookimpl(tryfirst=True)
+    def pytest_exception_interact(call):
+        raise call.excinfo.value
+    
+    @pytest.hookimpl(tryfirst=True)
+    def pytest_internalerror(excinfo):
+        raise excinfo.value
+
 with open(os.path.join(os.path.dirname(__file__), "data.sql"), "rb") as f:
     _data_sql = f.read().decode("utf8")
 
