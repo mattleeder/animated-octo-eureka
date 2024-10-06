@@ -1,0 +1,12 @@
+Columns Needed:
+
+- Route Start
+- Route End
+- Route Stops
+- Departure Time
+- Arrival Time
+- Stop Time
+- Is Cancelled?
+- Is Delayed? How much?
+- Disruptions / Alerts
+- Scheduled Times and Live Times

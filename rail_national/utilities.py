@@ -65,7 +65,7 @@ class Validators():
         try:
             datetime.strptime(data, time_format)
         except ValueError as e:
-            error_messages.append(f"{data} is not a valid time for the format {time_format}.")
+            error_messages.append(f"'{data}' is not a valid time for the format '{time_format}'.")
         for validator in extra_validators:
             _, errors = validator(data)
             error_messages.extend(errors)
@@ -76,10 +76,10 @@ class Validators():
         error_messages = []
         if not data:
             if required:
-                error_messages.append("Time required.")
+                error_messages.append("Cancelled required.")
             return data, error_messages
         if data != "0" and data != "1":
-            error_messages.append(f"{data} is not valid cancellation code.")
+            error_messages.append(f"'{data}' is not valid cancellation code.")
         for validator in extra_validators:
             _, errors = validator(data)
             error_messages.extend(errors)

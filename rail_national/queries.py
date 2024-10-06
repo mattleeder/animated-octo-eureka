@@ -47,8 +47,6 @@ def insert_route(route_id, origin_stn, destn_stn, stop_stn, origin_dep_time, des
         return True, ""
     except db.IntegrityError as e:
         match e.sqlite_errorcode:
-            case 20:
-                return False, f"Route ID '{route_id}' must be an integer."
             case 1555:
                 return False, f"Route ID '{route_id}' already exists."
             case _:

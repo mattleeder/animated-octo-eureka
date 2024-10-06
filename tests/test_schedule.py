@@ -54,6 +54,73 @@ def test_add_route(client, auth, app):
         count = queries.count_routes()
         assert count == 3
 
+def test_add_bad_route_id(client, auth, app):
+    auth.login()
+    assert client.get("/add_route").status_code == 200
+    response = client.post("/add_route", data = {
+        "route_id": "test", 
+        "origin_stn": "BHM", 
+        "destn_stn": "EUS", 
+        "stop_stn": "WFJ", 
+        "origin_dep_time": "2024-09-22T15:00",
+        "destn_arr_time": "2024-09-22T15:30",
+        "stop_time": "2024-09-22T15:15",
+        "cancelled": 0,
+    })
+
+    print(response.data)
+
+    assert b"&#39;test&#39; is non-numeric." in response.data
+
+def test_add_duplicate_route_id(client, auth, app):
+    auth.login()
+    assert client.get("/add_route").status_code == 200
+    response = client.post("/add_route", data = {
+        "route_id": 1, 
+        "origin_stn": "BHM", 
+        "destn_stn": "EUS", 
+        "stop_stn": "WFJ", 
+        "origin_dep_time": "2024-09-22T15:00",
+        "destn_arr_time": "2024-09-22T15:30",
+        "stop_time": "2024-09-22T15:15",
+        "cancelled": 0,
+    })
+
+    # &#39; is for single quotes ''
+    assert b"Route ID &#39;1&#39; already exists." in response.data
+
+def test_add_route_origin_departure_time_after_destination_arrival_time(client, auth, app):
+    auth.login()
+    assert client.get("/add_route").status_code == 200
+    response = client.post("/add_route", data = {
+        "route_id": 10, 
+        "origin_stn": "BHM", 
+        "destn_stn": "EUS", 
+        "stop_stn": "WFJ", 
+        "origin_dep_time": "2024-09-22T15:30",
+        "destn_arr_time": "2024-09-22T15:00",
+        "stop_time": "2024-09-22T15:15",
+        "cancelled": 0,
+    })
+
+    assert b"Origin Departure time cannot be later than Destination Arrival time." in response.data
+
+def test_add_route_origin_departure_time_after_stop_time(client, auth, app):
+    auth.login()
+    assert client.get("/add_route").status_code == 200
+    response = client.post("/add_route", data = {
+        "route_id": 10, 
+        "origin_stn": "BHM", 
+        "destn_stn": "EUS", 
+        "stop_stn": "WFJ", 
+        "origin_dep_time": "2024-09-22T15:00",
+        "destn_arr_time": "2024-09-22T15:30",
+        "stop_time": "2024-09-22T14:15",
+        "cancelled": 0,
+    })
+    
+    assert b"Origin Departure time cannot be later than Stop time." in response.data
+
 def test_update(client, auth, app):
     auth.login()
     assert client.get("/2/update_route").status_code == 200
