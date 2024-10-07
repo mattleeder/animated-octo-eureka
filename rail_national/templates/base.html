@@ -1,18 +1,23 @@
 <!doctype html>
-<title>{% block title %}{% endblock %} - Rail National</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<nav>
+<script defer src="{{ url_for('static', filename='javascript/base.js') }}"></script>
+<title>{% block title %}{% endblock %} - Rail National</title>
+<header class="navbar-header">
     <h1>Rail National</h1>
-    <u1>
-        {% if g.user %}
-            <li><span>{{ g.user["username"] }}</span>
-            <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
-        {% else %}
-            <li><a href="{{ url_for('auth.register') }}">Register</a>
-            <li><a href="{{ url_for('auth.login') }}">Log In</a>
-        {% endif %}
-    </u1>
-</nav>
+    <nav id="navbar" class="navbar">
+        <ul>
+            {% if g.user %}
+                <li><span>{{ g.user["username"] }}</span>
+                <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
+                <li><a href="{{ url_for('schedule.add_route') }}">Add Route</a>
+            {% else %}
+                <li><a href="{{ url_for('auth.register') }}">Register</a>
+                <li><a href="{{ url_for('auth.login') }}">Log In</a>
+            {% endif %}
+            <li><a href="{{ url_for('index') }}">Schedule</a>
+        </ul>
+    </nav>
+</header>
 <section class="content">
     <header>
         {% block header %}{% endblock %}
