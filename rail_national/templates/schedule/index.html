@@ -18,17 +18,25 @@
                 <th>Destination Arrival Time</th>
                 <th>Stop Time</th>
                 <th>Cancelled?</th>
+                <th>Update</th>
+                <th>Delete</th>
             </tr>
             {% for route in schedule %}
                 <tr>
-                    <th>{{ route["route_id"] }}</th>
-                    <th>{{ route["origin_stn"] }}</th>
-                    <th>{{ route["destn_stn"] }}</th>
-                    <th>{{ route["stop_stn"] }}</th>
-                    <th>{{ route["origin_dep_time"] }}</th>
-                    <th>{{ route["destn_arr_time"] }}</th>
-                    <th>{{ route["stop_time"] }}</th>
-                    <th>{{ route["cancelled"] }}</th>
+                    <td>{{ route["route_id"] }}</td>
+                    <td>{{ route["origin_stn"] }}</td>
+                    <td>{{ route["destn_stn"] }}</td>
+                    <td>{{ route["stop_stn"] }}</td>
+                    <td>{{ route["origin_dep_time"] }}</td>
+                    <td>{{ route["destn_arr_time"] }}</td>
+                    <td>{{ route["stop_time"] }}</td>
+                    <td>{{ route["cancelled"] }}</td>
+                    <td><a href="{{ url_for('schedule.update_route', route_id = route['route_id']) }}">Update Route</a></td>
+                    <td>
+                        <form action="{{ url_for('schedule.delete', route_id = route['route_id']) }}" method="post">
+                            <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+                        </form>
+                    </td>
                 </tr>
             {% endfor %}
         </table>
