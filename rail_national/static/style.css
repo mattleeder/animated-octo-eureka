@@ -87,6 +87,8 @@ table.schedule {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     width: 100%;
+    overflow-x: auto;
+    table-layout: auto;
 }
 
 table.schedule td, table.schedule th {
@@ -105,14 +107,9 @@ table.schedule tr:hover {
 table.schedule th {
     padding-top: 12px;
     padding-bottom: 12px;
-    text-align: left;
+    text-align: center;
     background-color: #04AA6D;
     color: white;
-}
-
-.input-icons {
-    width: 100%;
-    margin-bottom: 10px;
 }
 
 .input-icons i {
@@ -125,9 +122,23 @@ table.schedule th {
 }
 
 .input-field {
-    width: 100%;
+    position: relative;
+    display: block;
+    width: 80%;
     padding: 10px;
     text-align: center;
+    margin: auto;
+    max-width: max-content;
+    box-sizing: border-box;
+}
+
+.input-field::after {
+    position: relative;
+    display: inline-block;
+    font-family: 'Material Symbols Outlined';
+    content: "search";
+    left: 0;
+    top: 0;
 }
 
 .content { 
@@ -159,5 +170,5 @@ table.schedule th {
 .content label { font-weight: bold; margin-bottom: 0.5em; }
 .content input, .content textarea { margin-bottom: 1em; }
 .content textarea { min-height: 12em; resize: vertical; }
-input.danger { color: #cc2f2e; }
+input.danger { color: #ff5d5d; }
 input[type=submit] { align-self: start; min-width: 10em; }

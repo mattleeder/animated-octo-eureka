@@ -8,10 +8,12 @@
 {% endblock %}
 
 {% block content %}
+<!--<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100&icon_names=favorite,home,search,settings" rel="stylesheet"/>-->
+<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet"/>
         <table class="schedule">
             <tr>
-                <th><div class="input-icons">
-                    Route No<input type="text" id="myInput" class="input-field" onkeyup="myFunction()" placeholder="Search for Route No.."><i class="material-symbols-outlined icon">search</i>
+                <th><div class="input-field">
+                    Route No<input type="text" id="myInput" class="myInput" onkeyup="myFunction()" placeholder="Search for Route No..">
                 </div></th>
                 <th>Origin Station</th>
                 <th>Destination Station</th>
@@ -42,7 +44,17 @@
                 </tr>
             {% endfor %}
         </table>
-        <script src="{{ url_for('static', filename='javascript/schedule/search.js') }}"></script>
-        <span class="material-symbols-outlined">search</span>
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100&icon_names=favorite,home,search,settings" rel="stylesheet" />
+        <script defer type="text/javascript" charset="utf-8">
+            let span = document.createElement("span");
+            span.className += "material-symbols-outlined";
+            span.innerHTML = "search";
+
+            let tableInputs = document.getElementsByClassName("myInput");
+            console.log(tableInputs);
+            for (let i = 0; i < tableInputs.length; i++) {
+                console.log("Blah");
+                tableInputs[i].after(span);
+            }
+        </script>
+        <span class="material-symbols-outlined">&#xE8b6</span>
 {% endblock %}
