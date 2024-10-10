@@ -29,13 +29,20 @@ hr {
     background: lightgray; 
     width: 20%;
     height: 100%;
-    position: fixed;
+    position: absolute;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    top: 0;
 }
 
 .navbar { 
     background: lightgray; 
     display: flex; 
-    align-items: top; 
+    align-items: top;
+    position: relative;
+    left: 0;
+    top: 0;
 }
 
 .navbar h1 {
@@ -103,9 +110,44 @@ table.schedule th {
     color: white;
 }
 
-.content { padding: 0 1rem 1rem; margin-left: 25%; }
-.content > header { border-bottom: 1px solid lightgray; display: flex; align-items: flex-end; }
-.content > header h1 { flex: auto; margin: 1rem 0 0.25rem 0; }
+.input-icons {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.input-icons i {
+    position: absolute;
+}
+
+.icon {
+    padding: 10px;
+    min-width: 40px;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+}
+
+.content { 
+    padding: 0 1rem 1rem; 
+    position: absolute;
+    top: 0;
+    left: 20%;
+}
+
+.content > header {
+    border-bottom: 1px solid lightgray;
+    display: flex;
+    align-items: flex-end;
+}
+
+.content > header h1 {
+    flex: auto;
+    margin: 1rem 0 0.25rem 0; 
+}
+
 .flash { margin: 1em 0; padding: 1em; background: #cae6f6; border: 1px solid #377ba8; }
 .post > header { display: flex; align-items: flex-end; font-size: 0.85em; }
 .post > header > div:first-of-type { flex: auto; }

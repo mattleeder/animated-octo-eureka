@@ -10,7 +10,9 @@
 {% block content %}
         <table class="schedule">
             <tr>
-                <th>Route No</th>
+                <th><div class="input-icons">
+                    Route No<input type="text" id="myInput" class="input-field" onkeyup="myFunction()" placeholder="Search for Route No.."><i class="material-symbols-outlined icon">search</i>
+                </div></th>
                 <th>Origin Station</th>
                 <th>Destination Station</th>
                 <th>Stop</th>
@@ -40,4 +42,7 @@
                 </tr>
             {% endfor %}
         </table>
+        <script src="{{ url_for('static', filename='javascript/schedule/search.js') }}"></script>
+        <span class="material-symbols-outlined">search</span>
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100&icon_names=favorite,home,search,settings" rel="stylesheet" />
 {% endblock %}
