@@ -133,7 +133,6 @@ function mySortFunction(callingElement) {
       sorting = true;
     }
   }
-
 }
 
 function notSorted(first, second, sortDirection) {
