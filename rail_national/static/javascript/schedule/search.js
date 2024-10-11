@@ -113,7 +113,8 @@ function mySortFunction(callingElement) {
         sortDirection = sortOrder[j][1];
         first = rows[i].getElementsByTagName("td")[columnIndex];
         second = rows[i + 1].getElementsByTagName("td")[columnIndex];
-        if (first == second) {
+        if (first.innerHTML == second.innerHTML) {
+          console.log("EQUAL");
           continue;
         }
         break;
