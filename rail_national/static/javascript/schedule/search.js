@@ -34,3 +34,50 @@ function replaceCharAtStringIndex(string, index, replacement) {
   console.log(out);
   return out;
 }
+
+function mySortFunction(callingElement) {
+  console.log(callingElement);
+  columnIndex = parseInt(callingElement.parentElement.dataset.columnIndex);
+  sortState = callingElement.dataset.sortState;
+  table = document.getElementsByTagName("table")[0];
+  sorting = true;
+
+  while (sorting) {
+    sorting = false;
+    rows = table.rows;
+
+    for (let i = 1; i < (rows.length - 1); i++) {
+      shouldSwap = false;
+
+      first = rows[i].getElementsByTagName("td")[columnIndex];
+      second = rows[i + 1].getElementsByTagName("td")[columnIndex];
+      if (notSorted(first, second, sortState)) {
+        shouldSwap = true;
+        break;
+      }
+    }
+
+    if (shouldSwap) {
+      rows[i].parentElement.insertBefore(rows[i + 1], rows[i]);
+      sorting = true;
+    }
+  }
+
+  if (sortState == "1") {
+    callingElement.dataset.sortState = "0";
+    callingElement.classList.replace("sort-button-down", "sort-button-up");
+    callingElement.classList.replace("sort-button-both", "sort-button-up");
+  } else {
+    callingElement.dataset.sortState = "1";
+    callingElement.classList.replace("sort-button-up", "sort-button-down");
+  }
+}
+
+function notSorted(first, second, sortState) {
+  // If sort state is -1 we must sort in reverse
+  if (sortState == "-1") {
+    return first < second;
+  }
+  // Otherwise sort state is 1 and we should sort forwards
+  return second > first;
+}
