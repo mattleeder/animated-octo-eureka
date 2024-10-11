@@ -132,13 +132,10 @@ table.schedule th {
     box-sizing: border-box;
 }
 
-.input-field::after {
-    position: relative;
-    display: inline-block;
-    font-family: 'Material Symbols Outlined';
-    content: "search";
-    left: 0;
-    top: 0;
+.myInput {
+    background-image: url('search_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg');
+    background-repeat: no-repeat;
+    padding: 2px 0px 0px 25px;
 }
 
 .content { 

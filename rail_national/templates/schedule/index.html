@@ -8,25 +8,23 @@
 {% endblock %}
 
 {% block content %}
-<!--<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100&icon_names=favorite,home,search,settings" rel="stylesheet"/>-->
-<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script defer src="{{ url_for('static', filename='javascript/schedule/search.js') }}"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100&icon_names=favorite,home,search,settings" rel="stylesheet"/>
         <table class="schedule">
             <tr>
-                <th><div class="input-field">
-                    Route No<input type="text" id="myInput" class="myInput" onkeyup="myFunction()" placeholder="Search for Route No..">
-                </div></th>
-                <th>Origin Station</th>
-                <th>Destination Station</th>
-                <th>Stop</th>
-                <th>Origin Departure Time</th>
-                <th>Destination Arrival Time</th>
-                <th>Stop Time</th>
-                <th>Cancelled?</th>
-                <th>Update</th>
-                <th>Delete</th>
+                <th data-column-index="0">Route No<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Route No.."></th>
+                <th data-column-index="1">Origin Station<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Origin Station.."></th>
+                <th data-column-index="2">Destination Station</th>
+                <th data-column-index="3">Stop</th>
+                <th data-column-index="4">Origin Departure Time</th>
+                <th data-column-index="5">Destination Arrival Time</th>
+                <th data-column-index="6">Stop Time</th>
+                <th data-column-index="7">Cancelled?</th>
+                <th data-column-index="8">Update</th>
+                <th data-column-index="9">Delete</th>
             </tr>
             {% for route in schedule %}
-                <tr>
+                <tr data-columns-hiding-this-row="00000000">
                     <td>{{ route["route_id"] }}</td>
                     <td>{{ route["origin_stn"] }}</td>
                     <td>{{ route["destn_stn"] }}</td>
@@ -44,17 +42,4 @@
                 </tr>
             {% endfor %}
         </table>
-        <script defer type="text/javascript" charset="utf-8">
-            let span = document.createElement("span");
-            span.className += "material-symbols-outlined";
-            span.innerHTML = "search";
-
-            let tableInputs = document.getElementsByClassName("myInput");
-            console.log(tableInputs);
-            for (let i = 0; i < tableInputs.length; i++) {
-                console.log("Blah");
-                tableInputs[i].after(span);
-            }
-        </script>
-        <span class="material-symbols-outlined">&#xE8b6</span>
 {% endblock %}

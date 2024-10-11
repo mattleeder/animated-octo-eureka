@@ -19,16 +19,4 @@ for (var i = 0; i < listItems.length; i++) {
     listItems[i].className += " active";
     console.log("Set active");
   }
-} 
-
-// Add search icon after input in table
-span = document.createElement("span");
-span.className += "material-symbols-outlined";
-span.innerHTML = "search";
-
-tableInputs = document.getElementsByClassName("myInput");
-console.log(tableInputs);
-for (let i = 0; i < tableInputs.length; i++) {
-    console.log("Blah");
-    tableInputs[i].after(span);
 }
