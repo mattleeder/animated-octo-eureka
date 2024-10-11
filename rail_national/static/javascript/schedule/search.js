@@ -46,18 +46,23 @@ function mySortFunction(callingElement) {
     sorting = false;
     rows = table.rows;
 
-    for (let i = 1; i < (rows.length - 1); i++) {
+    for (i = 1; i < (rows.length - 1); i++) {
+      console.log(`i: ${i}`);
       shouldSwap = false;
 
       first = rows[i].getElementsByTagName("td")[columnIndex];
       second = rows[i + 1].getElementsByTagName("td")[columnIndex];
-      if (notSorted(first, second, sortState)) {
+      console.log(`Comparing: ${first.innerHTML} and ${second.innerHTML}`);
+      if (notSorted(first.innerHTML.toUpperCase(), second.innerHTML.toUpperCase(), sortState)) {
         shouldSwap = true;
+        console.log("Break");
         break;
       }
     }
 
     if (shouldSwap) {
+      console.log(`i: ${i}`);
+      console.log("Swapping");
       rows[i].parentElement.insertBefore(rows[i + 1], rows[i]);
       sorting = true;
     }
@@ -74,10 +79,12 @@ function mySortFunction(callingElement) {
 }
 
 function notSorted(first, second, sortState) {
-  // If sort state is -1 we must sort in reverse
-  if (sortState == "-1") {
+  // If sort state is 0 we must sort in reverse
+  if (sortState == "0") {
+    console.log(`Returning ${first < second}`);
     return first < second;
   }
   // Otherwise sort state is 1 and we should sort forwards
-  return second > first;
+  console.log(`Returning ${first > second}`);
+  return first > second;
 }
