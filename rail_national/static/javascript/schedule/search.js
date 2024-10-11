@@ -37,31 +37,32 @@ function replaceCharAtStringIndex(string, index, replacement) {
 
 function mySortFunction(callingElement) {
   console.log(callingElement);
+  table = document.getElementsByTagName("table")[0];
   columnIndex = parseInt(callingElement.parentElement.dataset.columnIndex);
   sortState = callingElement.dataset.sortState;
   if (sortState == "-1") {
     console.log("MINUS");
 
     // Remove sort
-    console.log(`Sort order dataset: ${callingElement.dataset.sortOrder}`);
-    callingElement.dataset.sortOrder = callingElement.dataset.sortOrder.replace(`-${columnIndex},`, "");
+    console.log(`Sort order dataset: ${table.dataset.sortOrder}`);
+    table.dataset.sortOrder = table.dataset.sortOrder.replace(`-${columnIndex},`, "");
 
     // Set state to 0
     callingElement.dataset.sortState = "0";
     callingElement.classList.replace("sort-button-down", "sort-button-both");
 
     // Check if sort order is empty
-    if (callingElement.dataset.sortOrder == "") {
+    if (table.dataset.sortOrder == "") {
       console.log("Early return");
       return;
     }
 
   } else if (sortState == "0") {
     console.log("ZEROOO");
-    console.log(`Sort order dataset: ${callingElement.dataset.sortOrder}`);
+    console.log(`Sort order dataset: ${table.dataset.sortOrder}`);
 
     // Append the column index to the sort order
-    callingElement.dataset.sortOrder += `${columnIndex},`;
+    table.dataset.sortOrder += `${columnIndex},`;
 
     // Set state to 1
     callingElement.dataset.sortState = "1";
@@ -71,8 +72,8 @@ function mySortFunction(callingElement) {
     console.log("ONE");
 
     // Reverse sort order
-    console.log(`Sort order dataset: ${callingElement.dataset.sortOrder}`);
-    callingElement.dataset.sortOrder = callingElement.dataset.sortOrder.replace(`${columnIndex},`, `-${columnIndex},`);
+    console.log(`Sort order dataset: ${table.dataset.sortOrder}`);
+    table.dataset.sortOrder = table.dataset.sortOrder.replace(`${columnIndex},`, `-${columnIndex},`);
 
     // Set state to -1
     callingElement.dataset.sortState = "-1";
@@ -81,7 +82,7 @@ function mySortFunction(callingElement) {
   }
 
   // Parse the sort order
-  sortOrder = callingElement.dataset.sortOrder.split(",").slice(0, -1);
+  sortOrder = table.dataset.sortOrder.split(",").slice(0, -1);
   console.log(sortOrder);
   sortOrder = sortOrder.map((x) => {
     num = parseInt(x);

@@ -10,10 +10,10 @@
 {% block content %}
 <script defer src="{{ url_for('static', filename='javascript/schedule/search.js') }}"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100&icon_names=favorite,home,search,settings" rel="stylesheet"/>
-        <table class="schedule">
+        <table class="schedule" data-sort-order="">
             <tr>
-                <th data-column-index="0">Route No<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Route No.."><button data-sort-state="0" data-sort-order="" class="sort-button-both" onclick="mySortFunction(this);"></button></th>
-                <th data-column-index="1">Origin Station<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Origin Station.."></th>
+                <th data-column-index="0">Route No<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Route No.."><button data-sort-state="0" class="sort-button-both" onclick="mySortFunction(this);"></button></th>
+                <th data-column-index="1">Origin Station<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Origin Station.."><button data-sort-state="0" class="sort-button-both" onclick="mySortFunction(this);"></button></th>
                 <th data-column-index="2">Destination Station<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Destination Station.."></th>
                 <th data-column-index="3">Stop<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Stop Station.."></th>
                 <th data-column-index="4">Origin Departure Time<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Origin Departure Time.."></th>
