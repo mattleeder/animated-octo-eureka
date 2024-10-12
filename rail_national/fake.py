@@ -14,18 +14,6 @@ train_lines = [
     ["CAA", "CAB", "CAC", "CAD", "CAE", "CAF", "CAG"],
 ]
 
-def app():
-
-    app = create_app({
-        "TESTING": True,
-        "DATABASE": os.path.join(app.instance_path, "rail_national.sqlite"),
-    })
-
-    with app.app_context():
-        init_db()
-
-    yield app
-
 def schedule(count = 1000):
 #     CREATE TABLE schedule (
 #     route_id INTEGER PRIMARY KEY,
@@ -37,6 +25,8 @@ def schedule(count = 1000):
 #     stop_time INTEGER NOT NULL,
 #     cancelled BOOLEAN NOT NULL
 # );
+    app = create_app()
+
     fake = Faker()
     i = 0
     while i < count:
@@ -58,5 +48,8 @@ def schedule(count = 1000):
         destn_arr_time = fake.date_time_between(stop_time)
         cancelled = 0
 
-        queries.insert_route(route_id, origin_stn, destn_stn, stop_stn, origin_dep_time, destn_arr_time, stop_time, cancelled)
+        with app.app_context():
+            queries.insert_route(route_id, origin_stn, destn_stn, stop_stn, origin_dep_time, destn_arr_time, stop_time, cancelled)
+
+        i += 1
         

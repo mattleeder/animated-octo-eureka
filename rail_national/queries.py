@@ -1,4 +1,5 @@
 from .db import get_db
+from sqlite3 import IntegrityError
 
 def get_route(route_id):
     route = get_db().execute("""
@@ -45,7 +46,7 @@ def insert_route(route_id, origin_stn, destn_stn, stop_stn, origin_dep_time, des
             )
         db.commit()
         return True, ""
-    except db.IntegrityError as e:
+    except IntegrityError as e:
         match e.sqlite_errorcode:
             case 1555:
                 return False, f"Route ID '{route_id}' already exists."
