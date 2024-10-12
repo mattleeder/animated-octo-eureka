@@ -36,15 +36,15 @@ function replaceCharAtStringIndex(string, index, replacement) {
 }
 
 function mySortFunction(callingElement) {
-  console.log(callingElement);
+  // Start timer
+  start = Date.now();
+
   table = document.getElementsByTagName("table")[0];
   columnIndex = parseInt(callingElement.parentElement.dataset.columnIndex);
   sortState = callingElement.dataset.sortState;
   if (sortState == "-1") {
-    console.log("MINUS");
 
     // Remove sort
-    console.log(`Sort order dataset: ${table.dataset.sortOrder}`);
     table.dataset.sortOrder = table.dataset.sortOrder.replace(`-${columnIndex},`, "");
 
     // Set state to 0
@@ -53,13 +53,10 @@ function mySortFunction(callingElement) {
 
     // Check if sort order is empty
     if (table.dataset.sortOrder == "") {
-      console.log("Early return");
       return;
     }
 
   } else if (sortState == "0") {
-    console.log("ZEROOO");
-    console.log(`Sort order dataset: ${table.dataset.sortOrder}`);
 
     // Append the column index to the sort order
     table.dataset.sortOrder += `${columnIndex},`;
@@ -69,10 +66,8 @@ function mySortFunction(callingElement) {
     callingElement.classList.replace("sort-button-both", "sort-button-up");
 
   } else if (sortState == "1") {
-    console.log("ONE");
 
     // Reverse sort order
-    console.log(`Sort order dataset: ${table.dataset.sortOrder}`);
     table.dataset.sortOrder = table.dataset.sortOrder.replace(`${columnIndex},`, `-${columnIndex},`);
 
     // Set state to -1
@@ -83,7 +78,6 @@ function mySortFunction(callingElement) {
 
   // Parse the sort order
   sortOrder = table.dataset.sortOrder.split(",").slice(0, -1);
-  console.log(sortOrder);
   sortOrder = sortOrder.map((x) => {
     num = parseInt(x);
     index = Math.abs(num);
@@ -102,25 +96,20 @@ function mySortFunction(callingElement) {
 
     // Check each pair of rows
     for (i = 1; i < (rows.length - 1); i++) {
-      console.log(`Row Index: ${i}`);
       shouldSwap = false;
 
-      console.log(`Sort order: ${sortOrder}`);
       // Check each column in the sort order
       for (j = 0; j < sortOrder.length; j++) {
-        console.log(`Sort order index: ${j}`);
         columnIndex = sortOrder[j][0];
         sortDirection = sortOrder[j][1];
         first = rows[i].getElementsByTagName("td")[columnIndex];
         second = rows[i + 1].getElementsByTagName("td")[columnIndex];
         if (first.innerHTML == second.innerHTML) {
-          console.log("EQUAL");
           continue;
         }
         break;
       }
       
-      console.log(`Comparing: ${first.innerHTML} and ${second.innerHTML} with sort direction ${sortDirection}`);
       if (notSorted(first.innerHTML.toUpperCase(), second.innerHTML.toUpperCase(), sortDirection)) {
         shouldSwap = true;
         break;
@@ -128,20 +117,43 @@ function mySortFunction(callingElement) {
     }
 
     if (shouldSwap) {
-      console.log("Swapping");
       rows[i].parentElement.insertBefore(rows[i + 1], rows[i]);
       sorting = true;
     }
   }
+
+  millisecondsPassed = Date.now() - start;
+  console.log(`Time taken for sort: ${millisecondsPassed / 1000}s`);
 }
 
 function notSorted(first, second, sortDirection) {
   // If sort direction is -1 we must sort in reverse
   if (sortDirection == -1) {
-    console.log(`Returning ${first < second}`);
     return first < second;
   }
   // Otherwise sort direction is 1 and we should sort forwards
-  console.log(`Returning ${first > second}`);
   return first > second;
+}
+
+function sortRouteNumber() {
+  start = Date.now();
+  table = document.getElementsByTagName("table")[0];
+  columnIndex = 0;
+  rows = table.rows;
+  rowData = [];
+  for (i = 1; i < rows.length; i++) {
+      currentRow = rows[i].getElementsByTagName("td")[columnIndex];
+      rowData.push([i, parseInt(currentRow.innerHTML)]);
+  }
+  rowData.sort((a, b) => a[1] - b[1]);
+  elements = document.createDocumentFragment();
+  elements.appendChild(rows[0].cloneNode(true)); // Header
+  for (i = 0; i < rowData.length; i++) {
+      elements.appendChild(rows[rowData[i][0]].cloneNode(true));
+  }
+  table.children[0].innerHTML = null;
+  table.children[0].appendChild(elements);
+  millisecondsPassed = Date.now() - start;
+  console.log(`Time taken for sort: ${millisecondsPassed / 1000}s`);
+
 }
