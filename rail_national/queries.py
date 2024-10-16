@@ -77,4 +77,14 @@ def get_column_types_from_table(table):
         """
     ).fetchall()
     column_types = {row["name"] : row["type"] for row in rows}
+    
+    if "origin_dep_time" in column_types:
+        column_types["origin_dep_time"] = "DATE"
+
+    if "destn_arr_time" in column_types:
+        column_types["destn_arr_time"] = "DATE"
+
+    if "stop_time" in column_types:
+        column_types["stop_time"] = "DATE"
+
     return column_types
