@@ -24,8 +24,9 @@ def get_route(route_id, check_permissions = False):
 
 @bp.route("/")
 def index():
+    column_types = queries.get_column_types_from_table("schedule")
     schedule = queries.get_schedule()
-    return render_template("schedule/index.html", schedule = schedule)
+    return render_template("schedule/index.html", schedule = schedule, column_types = column_types)
 
 @bp.route("/add_route", methods = ("GET", "POST"))
 @login_required

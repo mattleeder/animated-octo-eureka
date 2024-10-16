@@ -58,7 +58,7 @@ def update_route(origin_stn, destn_stn, stop_stn, origin_dep_time, destn_arr_tim
     db.execute("""
         UPDATE schedule SET origin_stn = ?, destn_stn = ?, stop_stn = ?, origin_dep_time = unixepoch(?), destn_arr_time = unixepoch(?), stop_time = unixepoch(?), cancelled = ?
          WHERE route_id = ?""",
-            (origin_stn, destn_stn, stop_stn, origin_dep_time, destn_arr_time, stop_time, cancelled, route_id),
+            (origin_stn, destn_stn, stop_stn, origin_dep_time, destn_arr_time, stop_time, cancelled, route_id,)
         )
     db.commit()
     return True, ""
@@ -67,3 +67,14 @@ def delete_route(route_id):
     db = get_db()
     db.execute("DELETE FROM schedule WHERE route_id = ?", (route_id,))
     db.commit()
+
+def get_column_types_from_table(table):
+    """DO NOT CALL WITH USER SUBMITTED DATA"""
+    db = get_db()
+    rows = db.execute(
+        f"""
+        PRAGMA table_info({table})
+        """
+    ).fetchall()
+    column_types = {row["name"] : row["type"] for row in rows}
+    return column_types

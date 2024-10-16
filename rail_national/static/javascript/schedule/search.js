@@ -155,5 +155,124 @@ function sortRouteNumber() {
   table.children[0].appendChild(elements);
   millisecondsPassed = Date.now() - start;
   console.log(`Time taken for sort: ${millisecondsPassed / 1000}s`);
+}
 
+function multiDimensionalSort(arrayToSort, sortOrder) {
+  arrayToSort.sort((a, b) => {
+      for (i = 0; i < sortOrder.length; i++) {
+        // Add 1 to ignore row index
+          //idx = sortOrder[i][0] + 1;
+          idx = i + 1;
+          sortDirection = sortOrder[i][1];
+          if (a[idx] == b[idx]) {
+              continue;
+          }
+          if (sortDirection == 1){
+            return (a[idx] > b[idx]) - 0.5; // > 0 if true < 0 if false
+          } else {
+            return (a[idx] < b[idx]) - 0.5; // > 0 if false < 0 if true
+          }
+      }
+      return 0;
+  });
+  return arrayToSort;
+}
+
+function mySortFunction2(callingElement) {
+  // Start timer
+  start = Date.now();
+
+  table = document.getElementsByTagName("table")[0];
+  headerRow = table.rows[0];
+  columnHeaders = headerRow.getElementsByTagName("th");
+  columnTypesIndexLookup = [];
+
+  for (let i = 0; i < columnHeaders.length; i++) {
+    columnTypesIndexLookup.push(columnHeaders[i].dataset.columnType);
+  }
+
+  columnTypeParseFunctionLookup = new Map()
+  columnTypeParseFunctionLookup.set("INTEGER", parseInt);
+
+  columnIndex = parseInt(callingElement.parentElement.dataset.columnIndex);
+  sortState = callingElement.dataset.sortState;
+  if (sortState == "-1") {
+
+    // Remove sort
+    table.dataset.sortOrder = table.dataset.sortOrder.replace(`-${columnIndex},`, "");
+
+    // Set state to 0
+    callingElement.dataset.sortState = "0";
+    callingElement.classList.replace("sort-button-down", "sort-button-both");
+
+    // Check if sort order is empty
+    if (table.dataset.sortOrder == "") {
+      return;
+    }
+
+  } else if (sortState == "0") {
+
+    // Append the column index to the sort order
+    table.dataset.sortOrder += `${columnIndex},`;
+
+    // Set state to 1
+    callingElement.dataset.sortState = "1";
+    callingElement.classList.replace("sort-button-both", "sort-button-up");
+
+  } else if (sortState == "1") {
+
+    // Reverse sort order
+    table.dataset.sortOrder = table.dataset.sortOrder.replace(`${columnIndex},`, `-${columnIndex},`);
+
+    // Set state to -1
+    callingElement.dataset.sortState = "-1";
+    callingElement.classList.replace("sort-button-up", "sort-button-down");
+
+  }
+
+  // Parse the sort order
+  sortOrder = table.dataset.sortOrder.split(",").slice(0, -1);
+  sortOrder = sortOrder.map((x) => {
+    num = parseInt(x);
+    index = Math.abs(num);
+    // 1 for forwards, -1 for reverse
+    sortDirection = x[0] == "-" ? -1 : 1;
+    return [index, sortDirection];
+  });
+
+  // Reverse to give priority to most recent clicks
+  sortOrder.reverse();
+
+  // Add Relevant Data For Sort
+  rows = table.rows;
+  rowData = [];
+  // Start from 1 to ignore header row
+  for (i = 1; i < rows.length; i++) {
+      currentRow = [];
+      currentRow.push(i);
+      // Add the relevant column data
+      for (j = 0; j < sortOrder.length; j++) {
+        columnIndex = sortOrder[j][0];
+        columnParseFunction = columnTypeParseFunctionLookup.get(columnTypesIndexLookup[columnIndex]);
+        if (columnParseFunction == undefined) {
+          data = rows[i].getElementsByTagName("td")[columnIndex].innerHTML;
+        } else {
+          data = columnParseFunction(rows[i].getElementsByTagName("td")[columnIndex].innerHTML);
+        }
+        currentRow.push(data);
+      }
+      rowData.push(currentRow);
+  }
+
+  
+  multiDimensionalSort(rowData, sortOrder);
+  elements = document.createDocumentFragment();
+  elements.appendChild(rows[0].cloneNode(true)); // Header
+  for (i = 0; i < rowData.length; i++) {
+      elements.appendChild(rows[rowData[i][0]].cloneNode(true));
+  }
+  table.children[0].innerHTML = null;
+  table.children[0].appendChild(elements);
+  millisecondsPassed = Date.now() - start;
+  console.log(`Time taken for sort: ${millisecondsPassed / 1000}s`);
 }
