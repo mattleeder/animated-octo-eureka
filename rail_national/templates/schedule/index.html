@@ -10,7 +10,56 @@
 {% block content %}
 <script defer src="{{ url_for('static', filename='javascript/schedule/search.js') }}"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100&icon_names=favorite,home,search,settings" rel="stylesheet"/>
-        <table class="schedule" data-sort-order="">
+<table id="schedule" class="schedule" data-sort-order="">
+    <thead>
+        <tr>
+            <th data-column-index="0" data-column-type="{{ column_types['route_id'] }}">Route No<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Route No.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+            <th data-column-index="1" data-column-type="{{ column_types['origin_stn'] }}">Origin Station<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Origin Station.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+            <th data-column-index="2" data-column-type="{{ column_types['destn_stn'] }}">Destination Station<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Destination Station.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+            <th data-column-index="3" data-column-type="{{ column_types['stop_stn'] }}">Stop<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Stop Station.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+            <th data-column-index="4" data-column-type="{{ column_types['origin_dep_time'] }}">Origin Departure Time<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Origin Departure Time.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+            <th data-column-index="5" data-column-type="{{ column_types['destn_arr_time'] }}">Destination Arrival Time<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Destination Arrival Time.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+            <th data-column-index="6" data-column-type="{{ column_types['stop_time'] }}">Stop Time<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Stop Time.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+            <th data-column-index="7" data-column-type="{{ column_types['cancelled'] }}">Cancelled?<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Cancelled.."></th>
+            <th data-column-index="8">Update</th>
+            <th data-column-index="9">Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Rows added here -->
+    </tbody>
+</table>
+
+<template id="schedule-data-storage">
+
+    <table>
+        
+        {% for route in schedule %}
+
+            <tr data-columns-hiding-this-row="00000000">
+                <td>{{ route["route_id"] }}</td>
+                <td>{{ route["origin_stn"] }}</td>
+                <td>{{ route["destn_stn"] }}</td>
+                <td>{{ route["stop_stn"] }}</td>
+                <td>{{ route["origin_dep_time"] }}</td>
+                <td>{{ route["destn_arr_time"] }}</td>
+                <td>{{ route["stop_time"] }}</td>
+                <td>{{ route["cancelled"] }}</td>
+                <td><a href="{{ url_for('schedule.update_route', route_id = route['route_id']) }}">Update Route</a></td>
+                <td>
+                    <form action="{{ url_for('schedule.delete', route_id = route['route_id']) }}" method="post">
+                        <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+                    </form>
+                </td>
+            </tr>
+
+        {% endfor %}
+
+    </table>
+
+</template>
+{#
+<!--        <table class="schedule" data-sort-order="">
             <tr>
                 <th data-column-index="0" data-column-type="{{ column_types['route_id'] }}">Route No<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Route No.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
                 <th data-column-index="1" data-column-type="{{ column_types['origin_stn'] }}">Origin Station<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Origin Station.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
@@ -42,4 +91,133 @@
                 </tr>
             {% endfor %}
         </table>
+    -->
+#}
+{#
+        <table class="schedule" data-sort-order="">
+            <thead>
+                <tr>
+                    <th data-column-index="0" data-column-type="{{ column_types['route_id'] }}">Route No<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Route No.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+                    <th data-column-index="1" data-column-type="{{ column_types['origin_stn'] }}">Origin Station<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Origin Station.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+                    <th data-column-index="2" data-column-type="{{ column_types['destn_stn'] }}">Destination Station<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Destination Station.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+                    <th data-column-index="3" data-column-type="{{ column_types['stop_stn'] }}">Stop<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Stop Station.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+                    <th data-column-index="4" data-column-type="{{ column_types['origin_dep_time'] }}">Origin Departure Time<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Origin Departure Time.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+                    <th data-column-index="5" data-column-type="{{ column_types['destn_arr_time'] }}">Destination Arrival Time<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Destination Arrival Time.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+                    <th data-column-index="6" data-column-type="{{ column_types['stop_time'] }}">Stop Time<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Stop Time.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+                    <th data-column-index="7" data-column-type="{{ column_types['cancelled'] }}">Cancelled?<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Cancelled.."></th>
+                    <th data-column-index="8">Update</th>
+                    <th data-column-index="9">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows added here -->
+            </tbody>
+        </table>
+                    
+        <table id="data-storage">
+            
+            {% for route in schedule %}
+
+                <tr data-columns-hiding-this-row="00000000">
+                    <td>{{ route["route_id"] }}</td>
+                    <td>{{ route["origin_stn"] }}</td>
+                    <td>{{ route["destn_stn"] }}</td>
+                    <td>{{ route["stop_stn"] }}</td>
+                    <td>{{ route["origin_dep_time"] }}</td>
+                    <td>{{ route["destn_arr_time"] }}</td>
+                    <td>{{ route["stop_time"] }}</td>
+                    <td>{{ route["cancelled"] }}</td>
+                    <td><a href="{{ url_for('schedule.update_route', route_id = route['route_id']) }}">Update Route</a></td>
+                    <td>
+                        <form action="{{ url_for('schedule.delete', route_id = route['route_id']) }}" method="post">
+                            <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+                        </form>
+                    </td>
+                </tr>
+
+            {% endfor %}
+            
+        </table>
+            
+   
+#}
+{#
+//    var table = `
+//        <table class="schedule" data-sort-order="">
+//            <tr>
+//                <th data-column-index="0" data-column-type="{{ column_types['route_id'] }}">Route No<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Route No.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+//                <th data-column-index="1" data-column-type="{{ column_types['origin_stn'] }}">Origin Station<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Origin Station.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+//                <th data-column-index="2" data-column-type="{{ column_types['destn_stn'] }}">Destination Station<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Destination Station.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+//                <th data-column-index="3" data-column-type="{{ column_types['stop_stn'] }}">Stop<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Stop Station.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+//                <th data-column-index="4" data-column-type="{{ column_types['origin_dep_time'] }}">Origin Departure Time<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Origin Departure Time.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+//                <th data-column-index="5" data-column-type="{{ column_types['destn_arr_time'] }}">Destination Arrival Time<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Destination Arrival Time.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+//                <th data-column-index="6" data-column-type="{{ column_types['stop_time'] }}">Stop Time<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Stop Time.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+//                <th data-column-index="7" data-column-type="{{ column_types['cancelled'] }}">Cancelled?<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Cancelled.."></th>
+//                <th data-column-index="8">Update</th>
+//                <th data-column-index="9">Delete</th>
+//            </tr>
+//            {% for route in schedule %}
+//                <tr data-columns-hiding-this-row="00000000">
+//                    <td>{{ route["route_id"] }}</td>
+//                    <td>{{ route["origin_stn"] }}</td>
+//                    <td>{{ route["destn_stn"] }}</td>
+//                    <td>{{ route["stop_stn"] }}</td>
+//                    <td>{{ route["origin_dep_time"] }}</td>
+//                    <td>{{ route["destn_arr_time"] }}</td>
+//                    <td>{{ route["stop_time"] }}</td>
+//                    <td>{{ route["cancelled"] }}</td>
+//                    <td><a href="{{ url_for('schedule.update_route', route_id = route['route_id']) }}">Update Route</a></td>
+//                    <td>
+//                        <form action="{{ url_for('schedule.delete', route_id = route['route_id']) }}" method="post">
+//                            <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+//                        </form>
+//                    </td>
+//                </tr>
+//            {% endfor %}
+//        </table>`;
+#}
+<script>
+    window.onload = (event) => {
+        console.log("page is fully loaded");
+        let virtualTable = new VirtualisedTable("schedule", "schedule-data-storage", 25);
+        virtualTable.addRows(0, 25);
+    };
+
+
+    columnTypeParseFunctionLookup = new Map()
+    columnTypeParseFunctionLookup.set("INTEGER", parseInt);
+    columnTypeParseFunctionLookup.set("DATE", Date.parse);
+
+    console.log("Loading script...");
+    var tableRowData = [];
+    {% for route in schedule %}
+
+        var currentRowData = [];
+        currentRowData.push(`{{ route["route_id"] }}`);
+        currentRowData.push(`{{ route["origin_stn"] }}`);
+        currentRowData.push(`{{ route["destn_stn"] }}`);
+        currentRowData.push(`{{ route["stop_stn"] }}`);
+        currentRowData.push(`{{ route["origin_dep_time"] }}`);
+        currentRowData.push(`{{ route["destn_arr_time"] }}`);
+        currentRowData.push(`{{ route["stop_time"] }}`);
+        currentRowData.push(`{{ route["cancelled"] }}`);
+        currentRowData.push(`<a href="{{ url_for('schedule.update_route', route_id = route['route_id']) }}">Update Route</a>`);
+        currentRowData.push(`
+        <form action="{{ url_for('schedule.delete', route_id = route['route_id']) }}" method="post">
+            <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+        </form>`
+        );
+        tableRowData.push(currentRowData);
+
+    {% endfor %}
+    function addTable() {
+        tableDiv = document.getElementById("table-wrapper");
+        tableDiv.innerHTML = table;
+    }
+    
+    function removeTable() {
+        tableDiv = document.getElementById("table-wrapper");
+        tableDiv.innerHTML = null;
+    } 
+</script>
 {% endblock %}

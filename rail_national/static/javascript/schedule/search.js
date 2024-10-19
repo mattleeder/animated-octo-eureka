@@ -36,6 +36,7 @@ function replaceCharAtStringIndex(string, index, replacement) {
 }
 
 function multiDimensionalSort(arrayToSort, sortOrder) {
+  sortStartTime = Date.now();
   arrayToSort.sort((a, b) => {
       for (i = 0; i < sortOrder.length; i++) {
         // Add 1 to ignore row index
@@ -53,12 +54,14 @@ function multiDimensionalSort(arrayToSort, sortOrder) {
       }
       return 0;
   });
+  sortTimeTakenMilliseconds = Date.now() - sortStartTime;
+  console.log(`Sort Time Taken ${sortTimeTakenMilliseconds / 1000}s`);
   return arrayToSort;
 }
 
 function columnMultiSort(callingElement) {
   // Start timer
-  start = Date.now();
+  functionStartTime = Date.now();
 
   table = document.getElementsByTagName("table")[0];
   headerRow = table.rows[0];
@@ -145,13 +148,57 @@ function columnMultiSort(callingElement) {
 
   
   multiDimensionalSort(rowData, sortOrder);
-  elements = document.createDocumentFragment();
-  elements.appendChild(rows[0].cloneNode(true)); // Header
+  // elements = document.createDocumentFragment();
+  // elements.appendChild(rows[0].cloneNode(true)); // Header
+  // for (i = 0; i < rowData.length; i++) {
+  //       elements.appendChild(rows[rowData[i][0]].cloneNode(true));
+  //   }
+  //   table.children[0].innerHTML = null;
+  //   table.children[0].appendChild(elements);
+  elements = [table.rows[0].outerHTML];
   for (i = 0; i < rowData.length; i++) {
-      elements.appendChild(rows[rowData[i][0]].cloneNode(true));
+        elements.push(rows[rowData[i][0]].outerHTML);
+    }
+  table.children[0].innerHTML = elements.join("");
+  functionMillisecondsPassed = Date.now() - functionStartTime;
+  console.log(`Time taken for function: ${functionMillisecondsPassed / 1000}s`);
+}
+
+function swapInnerHTML() {
+  startTime = Date.now();
+  table = document.getElementsByTagName("table")[0];
+  var rowsCopy = [];
+  for (i = 1; i < table.rows.length; i++) {
+    rowsCopy.push(table.rows[i].innerHTML);
   }
-  table.children[0].innerHTML = null;
-  table.children[0].appendChild(elements);
-  millisecondsPassed = Date.now() - start;
-  console.log(`Time taken for sort: ${millisecondsPassed / 1000}s`);
+  for (i = 1; i < table.rows.length; i++) {
+    table.rows[i].innerHTML = rowsCopy[i];
+  }
+  timeTakenMilliseconds = Date.now() - startTime;
+  console.log(`Time taken for swap: ${timeTakenMilliseconds / 1000}s`);
+}
+
+class VirtualisedTable {
+  constructor(tableID, rowDataTableTemplateID, numberOfElementsToRender) {
+    console.log("Creating Virtualised Table");
+    this.tableID = tableID;
+    this.rowDataTemplateID = rowDataTableTemplateID;
+    this.template = document.getElementById(rowDataTableTemplateID);
+    this.clone = this.template.content.cloneNode(true);
+    this.tableRowData = this.clone.children[0].rows;
+    this.numberOfElementsToRender = numberOfElementsToRender;
+    this.sizeOfVirtualisedList = this.tableRowData.length;
+    this.table = document.getElementById(tableID);
+    this.tableBody = this.table.getElementsByTagName("tbody")[0];
+  }
+
+  getRowData() {
+  }
+
+  addRows(startIdx, endIdx) {
+    for (i = startIdx; i < endIdx; i++) {
+      this.tableBody.appendChild(this.tableRowData[i]);
+    }
+  }
+
 }
