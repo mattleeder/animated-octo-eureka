@@ -263,6 +263,9 @@ class VirtualisedTable {
     this.tableBody.append(this.scrollDownControllerRow);
     var heightOfMissingRows = (this.sizeOfVirtualisedList - (this.greatestIndexToRender - this.lowestIndexToRender)) * this.rowHeight;
     this.scrollDownControllerRow.style.height = `${heightOfMissingRows}px`;
+    this.setInitialFilterValues();
+    this.filterRows();
+    this.updateRowsNew(this.rowIndex);
   }
 
   updateRowsNew(newRowIndex) {
@@ -385,15 +388,20 @@ class VirtualisedTable {
     return arrayToSort;
   }
 
-  filterRows(callingElement) {
+  updateFilterValues(callingElement) {
     // Declare variables
     console.log(callingElement);
-    var input, filter, i, j, columnIndex, shouldAdd;
+    var input, filter,columnIndex;
     columnIndex = parseInt(callingElement.parentElement.dataset.columnIndex);
     input = callingElement.value;
     filter = input.toUpperCase();
     this.filterValues[columnIndex] = filter;
     console.log(`filter: ${filter}, columnIndex: ${columnIndex}`);
+    this.filterRows();
+  }
+
+  filterRows() {
+    var i, j, columnIndex, shouldAdd;
     var filteredRows = [];
     var columnsToCheck = [];
 
@@ -431,6 +439,15 @@ class VirtualisedTable {
     this.filteredRows = filteredRows;
     this.updateRowsNew(this.rowIndex);
 
+  }
+
+  setInitialFilterValues() {
+    var filterInputs = this.table.getElementsByTagName("thead")[0].getElementsByTagName("input");
+    for (i = 0; i < filterInputs.length; i++) {
+      var filterValue = filterInputs[i].value.toUpperCase();
+      var columnIndex = parseInt(filterInputs[i].parentElement.dataset.columnIndex);
+      this.filterValues[columnIndex] = filterValue;
+    }
   }
 
 }
