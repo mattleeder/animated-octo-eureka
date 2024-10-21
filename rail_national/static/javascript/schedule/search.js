@@ -272,7 +272,7 @@ class VirtualisedTable {
     // Add elements to display + 5 on each side
     console.log(`New row index: ${newRowIndex}`);
     
-    var newLowestIndexToRender = Math.max(newRowIndex, 0);
+    var newLowestIndexToRender = Math.max(newRowIndex- 5, 0);
     var newGreatestIndexToRender = Math.min(newLowestIndexToRender + this.numberOfElementsToRender - 1, this.filteredRows.length - 1);
     newLowestIndexToRender = Math.max(Math.min(newLowestIndexToRender, newGreatestIndexToRender - this.numberOfElementsToRender + 1), 0);
 
@@ -291,7 +291,7 @@ class VirtualisedTable {
     }
 
     var numRowsMissingAbove = newLowestIndexToRender;
-    var numRowsMissingBelow = this.sizeOfVirtualisedList - newGreatestIndexToRender - 1;
+    var numRowsMissingBelow = this.filteredRows.length - newGreatestIndexToRender - 1;
 
     console.log(`Num Rows Missing Above: ${numRowsMissingAbove}`);
     console.log(`Num Rows Missing Below: ${numRowsMissingBelow}`);
