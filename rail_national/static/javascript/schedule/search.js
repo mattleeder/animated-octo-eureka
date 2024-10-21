@@ -1,4 +1,4 @@
-function myFunction(callingElement) {
+function filterRows(callingElement) {
     // Declare variables
     console.log(callingElement);
     var input, filter, table, tr, td, i, txtValue, columnIndex;
@@ -254,6 +254,7 @@ class VirtualisedTable {
 
   updateRows(newRowIndex) {
     // Add elements to display + 5 on each side
+    console.log("Updating rows");
     if (newRowIndex == this.rowIndex) {
       return;
     }
@@ -393,4 +394,93 @@ class VirtualisedTable {
     this.scrollUpControllerRow.style.height = `${(numRowsMissingAbove * this.rowHeight)}px`;
     this.scrollDownControllerRow.style.height = `${(numRowsMissingBelow * this.rowHeight)}px`;
   }
+
+  columnMultiSort(callingElement) {
+    console.log("Called");
+    console.log(callingElement);
+    // Start timer
+    var functionStartTime = Date.now();
+
+    var table = this.table;
+
+    var columnIndex = parseInt(callingElement.parentElement.dataset.columnIndex);
+    console.log(`Column Index: ${columnIndex}`);
+    var sortState = callingElement.dataset.sortState;
+
+    if (sortState == "-1") {
+
+      // Remove sort
+      table.dataset.sortOrder = table.dataset.sortOrder.replace(`-${columnIndex},`, "");
+
+      // Set state to 0
+      callingElement.dataset.sortState = "0";
+      callingElement.classList.replace("sort-button-down", "sort-button-both");
+
+      // Check if sort order is empty
+      if (table.dataset.sortOrder == "") {
+        return;
+      }
+
+    } else if (sortState == "0") {
+
+      // Append the column index to the sort order
+      table.dataset.sortOrder += `${columnIndex},`;
+
+      // Set state to 1
+      callingElement.dataset.sortState = "1";
+      callingElement.classList.replace("sort-button-both", "sort-button-up");
+
+    } else if (sortState == "1") {
+
+      // Reverse sort order
+      table.dataset.sortOrder = table.dataset.sortOrder.replace(`${columnIndex},`, `-${columnIndex},`);
+
+      // Set state to -1
+      callingElement.dataset.sortState = "-1";
+      callingElement.classList.replace("sort-button-up", "sort-button-down");
+
+    }
+
+    // Parse the sort order
+    var sortOrder = table.dataset.sortOrder.split(",").slice(0, -1);
+    sortOrder = sortOrder.map((x) => {
+      var num = parseInt(x);
+      var index = Math.abs(num) + 1; // Add 1 to avoid the row in array
+      // 1 for forwards, -1 for reverse
+      var sortDirection = x[0] == "-" ? -1 : 1;
+      return [index, sortDirection];
+    });
+    console.log(`Sort order: ${sortOrder}`);
+
+    // Reverse to give priority to most recent clicks
+    sortOrder.reverse();
+    
+    this.multiDimensionalSort(this.parsedRowData, sortOrder);
+    this.updateRowsNew(this.rowIndex);
+    var functionMillisecondsPassed = Date.now() - functionStartTime;
+    console.log(`Time taken for function: ${functionMillisecondsPassed / 1000}s`);
+    }
+
+  multiDimensionalSort(arrayToSort, sortOrder) {
+    var sortStartTime = Date.now();
+    arrayToSort.sort((a, b) => {
+        for (i = 0; i < sortOrder.length; i++) {
+            var idx = sortOrder[i][0];
+            var sortDirection = sortOrder[i][1];
+            if (a[idx] == b[idx]) {
+                continue;
+            }
+            if (sortDirection == 1){
+              return (a[idx] > b[idx]) - 0.5; // > 0 if true < 0 if false
+            } else {
+              return (a[idx] < b[idx]) - 0.5; // > 0 if false < 0 if true
+            }
+        }
+        return 0;
+    });
+    var sortTimeTakenMilliseconds = Date.now() - sortStartTime;
+    console.log(`Sort Time Taken ${sortTimeTakenMilliseconds / 1000}s`);
+    return arrayToSort;
+  }
+
 }
