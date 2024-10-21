@@ -437,6 +437,7 @@ class VirtualisedTable {
     }
 
     this.filteredRows = filteredRows;
+    this.updateNumberOfRowsRendered();
     this.updateRowsNew(this.rowIndex);
 
   }
@@ -447,6 +448,21 @@ class VirtualisedTable {
       var filterValue = filterInputs[i].value.toUpperCase();
       var columnIndex = parseInt(filterInputs[i].parentElement.dataset.columnIndex);
       this.filterValues[columnIndex] = filterValue;
+    }
+  }
+
+  updateNumberOfRowsRendered() {
+    var numberOfRowsOnTable = this.tableBody.children.length - 2;
+    if (numberOfRowsOnTable > this.filteredRows.length) {
+      // Sub 2 to account for scrollDownControllerRow, remove children in reverse
+      for (var i = this.tableBody.children.length - 2; i > this.filteredRows.length; i--) {
+        this.tableBody.removeChild(this.tableBody.children[i]);
+      }
+    } else if (numberOfRowsOnTable < this.numberOfElementsToRender) {
+      var maxVisibleElements = Math.min(this.numberOfElementsToRender, this.filteredRows.length);
+      for (var i = 0; i < maxVisibleElements - numberOfRowsOnTable; i++) {
+        this.tableBody.insertBefore(this.filteredRows[0][0].cloneNode(true), this.scrollDownControllerRow);
+      }
     }
   }
 
