@@ -188,20 +188,25 @@ class VirtualisedTable {
     this.tableRowData = this.clone.children[0].rows;
     this.numberOfElementsToRender = numberOfElementsToRender;
     this.sizeOfVirtualisedList = this.tableRowData.length;
+    if (this.numberOfElementsToRender > this.sizeOfVirtualisedList) {
+      throw new Error("Not enough elements in list!");
+    }
     this.table = document.getElementById(tableID);
     this.rowHeight = 84.4;
     this.scrollTop = 0;
     this.rowIndex = 0;
     this.lowestIndexToRender = 0;
-    this.greatestIndexToRender = (numberOfElementsToRender - 1) + 5;
+    this.greatestIndexToRender = (numberOfElementsToRender - 1);
     this.scrollUpControllerRow = document.createElement("tr");
     this.scrollDownControllerRow = document.createElement("tr");
     this.table.parentElement.onscroll = (event) => {
       console.log(`Scrolled: ${this.table.parentElement.scrollTop - this.scrollTop}px`);
       this.scrollTop = this.table.parentElement.scrollTop;
       var newRowIndex = Math.floor(this.scrollTop / this.rowHeight);
-      this.updateRows(newRowIndex);
-      this.rowIndex = newRowIndex;
+      if (newRowIndex != this.rowIndex) {
+        this.updateRowsNew(newRowIndex);
+        this.rowIndex = newRowIndex;
+        }
       console.log(this.scrollTop);
     }
     this.tableBody = this.table.getElementsByTagName("tbody")[0];
@@ -260,6 +265,9 @@ class VirtualisedTable {
     // Remove top rows
     console.log(`Trying to remove ${Math.max(newLowestIndexToRender - this.lowestIndexToRender, 0)} rows from top`);
     for (i = this.lowestIndexToRender; i < newLowestIndexToRender; i++) {
+      if (this.tableBody.children.length <= 2) {
+        break;
+      }
       this.tableBody.removeChild(this.tableBody.children[1]);
       tracker += 1;
     }
@@ -271,6 +279,9 @@ class VirtualisedTable {
     // Remove bottom rows
     console.log(`Trying to remove ${Math.max(this.greatestIndexToRender - newGreatestIndexToRender, 0)} rows from bottom`);
     for (i = this.greatestIndexToRender; i > newGreatestIndexToRender; i--) {
+      if (this.tableBody.children.length <= 2) {
+        break;
+      }
       this.tableBody.removeChild(this.tableBody.children[this.tableBody.children.length - 2]);
       tracker += 1;
     }
@@ -284,6 +295,10 @@ class VirtualisedTable {
     console.log(`Trying to add ${Math.max(this.lowestIndexToRender - newLowestIndexToRender, 0)} rows to top`);
     for (i = this.lowestIndexToRender - 1; i >= newLowestIndexToRender; i-- ) {
       //this.tableBody.prepend(this.parsedRowData[i][0].cloneNode(true));
+      console.log(`i is: ${i}`);
+      if (i < 0 || i > this.sizeOfVirtualisedList - 1) {
+        continue;
+      }
       this.tableBody.insertBefore(this.parsedRowData[i][0].cloneNode(true), this.scrollUpControllerRow.nextSibling);
       tracker += 1;
     }
@@ -297,12 +312,24 @@ class VirtualisedTable {
     console.log(`Trying to add ${Math.max(newGreatestIndexToRender - this.greatestIndexToRender, 0)} rows to bottom`);
     for (i = this.greatestIndexToRender + 1; i <= newGreatestIndexToRender; i++) {
       //this.tableBody.append(this.parsedRowData[i][0].cloneNode(true));
+      console.log(`i is: ${i}`);
+      if (i < 0 || i > this.sizeOfVirtualisedList - 1) {
+        continue;
+      }
       this.tableBody.insertBefore(this.parsedRowData[i][0].cloneNode(true), this.scrollDownControllerRow);
       tracker += 1;
     }
     console.log(`Actually added ${tracker}`);
     this.scrollDownControllerRow.style.height = `${parseInt(this.scrollDownControllerRow.style.height) - (tracker * this.rowHeight)}px`;
     //this.scrollDownControllerRow.style.height = `${this.scrollDownControllerRow.style.height - Math.max(newGreatestIndexToRender - this.greatestIndexToRender, 0)}px`;
+
+    if (newLowestIndexToRender <= 0) {
+      this.scrollUpControllerRow.style.height = "0px";
+    }
+
+    if (newGreatestIndexToRender >= this.sizeOfVirtualisedList - 1) {
+      this.scrollDownControllerRow.style.height = "0px";
+    }
 
 
     this.lowestIndexToRender = newLowestIndexToRender;
@@ -318,5 +345,52 @@ class VirtualisedTable {
     this.tableBody.append(this.scrollDownControllerRow);
     var heightOfMissingRows = (this.sizeOfVirtualisedList - (this.greatestIndexToRender - this.lowestIndexToRender)) * this.rowHeight;
     this.scrollDownControllerRow.style.height = `${heightOfMissingRows}px`;
+  }
+
+  updateRowsNew(newRowIndex) {
+    // Add elements to display + 5 on each side
+    console.log(`New row index: ${newRowIndex}`);
+    
+    var newLowestIndexToRender = Math.max(newRowIndex, 0);
+    var newGreatestIndexToRender = Math.min(newLowestIndexToRender + this.numberOfElementsToRender - 1, this.parsedRowData.length - 1);
+    newLowestIndexToRender = Math.max(Math.min(newLowestIndexToRender, newGreatestIndexToRender - this.numberOfElementsToRender + 1), 0);
+
+    var indexTracker = newLowestIndexToRender;
+    var numRowsRemoved = 0;
+    var numRowsAdded = 0;
+    console.log(`New lowest index to render: ${newLowestIndexToRender}`);
+    console.log(`New greatest index to render: ${newGreatestIndexToRender}`);
+    
+    indexTracker = 0;
+    for (i = 1; i < this.tableBody.children.length - 1; i++) {
+      var idx = newLowestIndexToRender + i - 1;
+      console.log(`Index Tracker: ${idx}`);
+      this.tableBody.replaceChild(this.parsedRowData[idx][0].cloneNode(true), this.tableBody.children[i]);
+      indexTracker += 1;
+      console.log(`Num loops: ${indexTracker}`);
+      console.log(`Max i: ${this.tableBody.children.length - 2}`);
+    }
+
+    // for (i = 1; i < this.tableBody.children.length - 1; i++) {
+    //   this.tableBody.removeChild(this.tableBody.children[i]);
+    //   numRowsRemoved += 1;
+    //   this.scrollUpControllerRow.style.height = `${(parseInt(this.scrollUpControllerRow.style.height) + this.rowHeight)}px`;
+    // }
+    // console.log(`Removed: ${numRowsRemoved} rows`);
+
+    // for (i = newLowestIndexToRender; i <= newGreatestIndexToRender; i++) {
+    //   this.tableBody.insertBefore(this.parsedRowData[i][0].cloneNode(true), this.scrollUpControllerRow.nextSibling);
+    //   numRowsAdded += 1;
+    // }
+    // console.log(`Added: ${numRowsAdded} rows`);
+
+    var numRowsMissingAbove = newLowestIndexToRender;
+    var numRowsMissingBelow = this.sizeOfVirtualisedList - newGreatestIndexToRender - 1;
+
+    console.log(`Num Rows Missing Above: ${numRowsMissingAbove}`);
+    console.log(`Num Rows Missing Below: ${numRowsMissingBelow}`);
+
+    this.scrollUpControllerRow.style.height = `${(numRowsMissingAbove * this.rowHeight)}px`;
+    this.scrollDownControllerRow.style.height = `${(numRowsMissingBelow * this.rowHeight)}px`;
   }
 }
