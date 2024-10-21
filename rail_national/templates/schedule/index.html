@@ -10,25 +10,27 @@
 {% block content %}
 <script defer src="{{ url_for('static', filename='javascript/schedule/search.js') }}"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100&icon_names=favorite,home,search,settings" rel="stylesheet"/>
-<table id="schedule" class="schedule" data-sort-order="">
-    <thead>
-        <tr>
-            <th data-column-index="0" data-column-type="{{ column_types['route_id'] }}">Route No<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Route No.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
-            <th data-column-index="1" data-column-type="{{ column_types['origin_stn'] }}">Origin Station<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Origin Station.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
-            <th data-column-index="2" data-column-type="{{ column_types['destn_stn'] }}">Destination Station<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Destination Station.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
-            <th data-column-index="3" data-column-type="{{ column_types['stop_stn'] }}">Stop<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Stop Station.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
-            <th data-column-index="4" data-column-type="{{ column_types['origin_dep_time'] }}">Origin Departure Time<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Origin Departure Time.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
-            <th data-column-index="5" data-column-type="{{ column_types['destn_arr_time'] }}">Destination Arrival Time<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Destination Arrival Time.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
-            <th data-column-index="6" data-column-type="{{ column_types['stop_time'] }}">Stop Time<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Stop Time.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
-            <th data-column-index="7" data-column-type="{{ column_types['cancelled'] }}">Cancelled?<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Cancelled.."></th>
-            <th data-column-index="8">Update</th>
-            <th data-column-index="9">Delete</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Rows added here -->
-    </tbody>
-</table>
+<div style="overflow-x: auto; overflow-y: auto; height: 550px; width: 1200px;">
+    <table id="schedule" class="schedule" data-sort-order="">
+        <thead>
+            <tr>
+                <th data-column-index="0" data-column-type="{{ column_types['route_id'] }}">Route No<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Route No.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+                <th data-column-index="1" data-column-type="{{ column_types['origin_stn'] }}">Origin Station<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Origin Station.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+                <th data-column-index="2" data-column-type="{{ column_types['destn_stn'] }}">Destination Station<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Destination Station.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+                <th data-column-index="3" data-column-type="{{ column_types['stop_stn'] }}">Stop<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Stop Station.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+                <th data-column-index="4" data-column-type="{{ column_types['origin_dep_time'] }}">Origin Departure Time<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Origin Departure Time.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+                <th data-column-index="5" data-column-type="{{ column_types['destn_arr_time'] }}">Destination Arrival Time<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Destination Arrival Time.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+                <th data-column-index="6" data-column-type="{{ column_types['stop_time'] }}">Stop Time<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Stop Time.."><button data-sort-state="0" class="sort-button-both" onclick="columnMultiSort(this);"></button></th>
+                <th data-column-index="7" data-column-type="{{ column_types['cancelled'] }}">Cancelled?<input type="text" id="myInput" class="myInput" onkeyup="myFunction(this);" placeholder="Search for Cancelled.."></th>
+                <th data-column-index="8">Update</th>
+                <th data-column-index="9">Delete</th>
+            </tr>
+        </thead>
+        <tbody style="overflow-y: scroll;">
+            <!-- Rows added here -->
+        </tbody>
+    </table>
+</div>
 
 <template id="schedule-data-storage">
 
@@ -177,10 +179,10 @@
 //        </table>`;
 #}
 <script>
+    let virtualTable = null;
     window.onload = (event) => {
         console.log("page is fully loaded");
-        let virtualTable = new VirtualisedTable("schedule", "schedule-data-storage", 25);
-        virtualTable.addRows(0, 25);
+        virtualTable = new VirtualisedTable("schedule", "schedule-data-storage", 50);
     };
 
 
