@@ -209,9 +209,11 @@ class VirtualisedTable {
         }
       console.log(this.scrollTop);
     }
+    this.filterValues = Array.apply(null, Array(this.table.getElementsByTagName("th").length)).map(function () {});
     this.tableBody = this.table.getElementsByTagName("tbody")[0];
     this.columnTypes = this._getColumnTypes();
     this.parsedRowData = this._getRowData();
+    this.filteredRows = [...this.parsedRowData];
     console.log("Parsed data");
     this.initialise();
     console.log("Initialised");
@@ -252,96 +254,11 @@ class VirtualisedTable {
     return rowData;
   }
 
-  updateRows(newRowIndex) {
-    // Add elements to display + 5 on each side
-    console.log("Updating rows");
-    if (newRowIndex == this.rowIndex) {
-      return;
-    }
-    
-    var newLowestIndexToRender = Math.max(newRowIndex - 5, 0);
-    var newGreatestIndexToRender = Math.min(newRowIndex + this.numberOfElementsToRender - 1, this.parsedRowData.length - 1);
-    var tracker = 0;
-
-    // Remove top rows
-    console.log(`Trying to remove ${Math.max(newLowestIndexToRender - this.lowestIndexToRender, 0)} rows from top`);
-    for (i = this.lowestIndexToRender; i < newLowestIndexToRender; i++) {
-      if (this.tableBody.children.length <= 2) {
-        break;
-      }
-      this.tableBody.removeChild(this.tableBody.children[1]);
-      tracker += 1;
-    }
-    console.log(`Actually removed ${tracker}`);
-    this.scrollUpControllerRow.style.height = `${parseInt(this.scrollUpControllerRow.style.height) + (tracker * this.rowHeight)}px`;
-    //this.scrollUpControllerRow.style.height = `${this.scrollUpControllerRow.style.height + Math.max(newLowestIndexToRender - this.lowestIndexToRender, 0)}px`;
-
-    tracker = 0;
-    // Remove bottom rows
-    console.log(`Trying to remove ${Math.max(this.greatestIndexToRender - newGreatestIndexToRender, 0)} rows from bottom`);
-    for (i = this.greatestIndexToRender; i > newGreatestIndexToRender; i--) {
-      if (this.tableBody.children.length <= 2) {
-        break;
-      }
-      this.tableBody.removeChild(this.tableBody.children[this.tableBody.children.length - 2]);
-      tracker += 1;
-    }
-    console.log(`Actually removed ${tracker}`);
-    this.scrollDownControllerRow.style.height = `${parseInt(this.scrollDownControllerRow.style.height) + (tracker * this.rowHeight)}px`;
-    //this.scrollDownControllerRow.style.height = `${this.scrollDownControllerRow.style.height + Math.max(this.greatestIndexToRender - newGreatestIndexToRender, 0)}px`;
-
-
-    tracker = 0;
-    // Add top rows
-    console.log(`Trying to add ${Math.max(this.lowestIndexToRender - newLowestIndexToRender, 0)} rows to top`);
-    for (i = this.lowestIndexToRender - 1; i >= newLowestIndexToRender; i-- ) {
-      //this.tableBody.prepend(this.parsedRowData[i][0].cloneNode(true));
-      console.log(`i is: ${i}`);
-      if (i < 0 || i > this.sizeOfVirtualisedList - 1) {
-        continue;
-      }
-      this.tableBody.insertBefore(this.parsedRowData[i][0].cloneNode(true), this.scrollUpControllerRow.nextSibling);
-      tracker += 1;
-    }
-    console.log(`Actually added ${tracker}`);
-    this.scrollUpControllerRow.style.height = `${parseInt(this.scrollUpControllerRow.style.height) - (tracker * this.rowHeight)}px`;
-    //this.scrollUpControllerRow.style.height = `${this.scrollUpControllerRow.style.height - Math.max(this.lowestIndexToRender - newLowestIndexToRender, 0)}px`;
-
-
-    tracker = 0;
-    // Add bottom rows
-    console.log(`Trying to add ${Math.max(newGreatestIndexToRender - this.greatestIndexToRender, 0)} rows to bottom`);
-    for (i = this.greatestIndexToRender + 1; i <= newGreatestIndexToRender; i++) {
-      //this.tableBody.append(this.parsedRowData[i][0].cloneNode(true));
-      console.log(`i is: ${i}`);
-      if (i < 0 || i > this.sizeOfVirtualisedList - 1) {
-        continue;
-      }
-      this.tableBody.insertBefore(this.parsedRowData[i][0].cloneNode(true), this.scrollDownControllerRow);
-      tracker += 1;
-    }
-    console.log(`Actually added ${tracker}`);
-    this.scrollDownControllerRow.style.height = `${parseInt(this.scrollDownControllerRow.style.height) - (tracker * this.rowHeight)}px`;
-    //this.scrollDownControllerRow.style.height = `${this.scrollDownControllerRow.style.height - Math.max(newGreatestIndexToRender - this.greatestIndexToRender, 0)}px`;
-
-    if (newLowestIndexToRender <= 0) {
-      this.scrollUpControllerRow.style.height = "0px";
-    }
-
-    if (newGreatestIndexToRender >= this.sizeOfVirtualisedList - 1) {
-      this.scrollDownControllerRow.style.height = "0px";
-    }
-
-
-    this.lowestIndexToRender = newLowestIndexToRender;
-    this.greatestIndexToRender = newGreatestIndexToRender;
-  }
-
   initialise() {
     this.tableBody.append(this.scrollUpControllerRow);
     this.scrollUpControllerRow.style.height = "0px";
     for (i = this.lowestIndexToRender; i <= this.greatestIndexToRender; i++) {
-      this.tableBody.append(this.parsedRowData[i][0].cloneNode(true));
+      this.tableBody.append(this.filteredRows[i][0].cloneNode(true));
     }
     this.tableBody.append(this.scrollDownControllerRow);
     var heightOfMissingRows = (this.sizeOfVirtualisedList - (this.greatestIndexToRender - this.lowestIndexToRender)) * this.rowHeight;
@@ -353,12 +270,10 @@ class VirtualisedTable {
     console.log(`New row index: ${newRowIndex}`);
     
     var newLowestIndexToRender = Math.max(newRowIndex, 0);
-    var newGreatestIndexToRender = Math.min(newLowestIndexToRender + this.numberOfElementsToRender - 1, this.parsedRowData.length - 1);
+    var newGreatestIndexToRender = Math.min(newLowestIndexToRender + this.numberOfElementsToRender - 1, this.filteredRows.length - 1);
     newLowestIndexToRender = Math.max(Math.min(newLowestIndexToRender, newGreatestIndexToRender - this.numberOfElementsToRender + 1), 0);
 
     var indexTracker = newLowestIndexToRender;
-    var numRowsRemoved = 0;
-    var numRowsAdded = 0;
     console.log(`New lowest index to render: ${newLowestIndexToRender}`);
     console.log(`New greatest index to render: ${newGreatestIndexToRender}`);
     
@@ -366,24 +281,11 @@ class VirtualisedTable {
     for (i = 1; i < this.tableBody.children.length - 1; i++) {
       var idx = newLowestIndexToRender + i - 1;
       console.log(`Index Tracker: ${idx}`);
-      this.tableBody.replaceChild(this.parsedRowData[idx][0].cloneNode(true), this.tableBody.children[i]);
+      this.tableBody.replaceChild(this.filteredRows[idx][0].cloneNode(true), this.tableBody.children[i]);
       indexTracker += 1;
       console.log(`Num loops: ${indexTracker}`);
       console.log(`Max i: ${this.tableBody.children.length - 2}`);
     }
-
-    // for (i = 1; i < this.tableBody.children.length - 1; i++) {
-    //   this.tableBody.removeChild(this.tableBody.children[i]);
-    //   numRowsRemoved += 1;
-    //   this.scrollUpControllerRow.style.height = `${(parseInt(this.scrollUpControllerRow.style.height) + this.rowHeight)}px`;
-    // }
-    // console.log(`Removed: ${numRowsRemoved} rows`);
-
-    // for (i = newLowestIndexToRender; i <= newGreatestIndexToRender; i++) {
-    //   this.tableBody.insertBefore(this.parsedRowData[i][0].cloneNode(true), this.scrollUpControllerRow.nextSibling);
-    //   numRowsAdded += 1;
-    // }
-    // console.log(`Added: ${numRowsAdded} rows`);
 
     var numRowsMissingAbove = newLowestIndexToRender;
     var numRowsMissingBelow = this.sizeOfVirtualisedList - newGreatestIndexToRender - 1;
@@ -455,7 +357,7 @@ class VirtualisedTable {
     // Reverse to give priority to most recent clicks
     sortOrder.reverse();
     
-    this.multiDimensionalSort(this.parsedRowData, sortOrder);
+    this.multiDimensionalSort(this.filteredRows, sortOrder);
     this.updateRowsNew(this.rowIndex);
     var functionMillisecondsPassed = Date.now() - functionStartTime;
     console.log(`Time taken for function: ${functionMillisecondsPassed / 1000}s`);
@@ -481,6 +383,54 @@ class VirtualisedTable {
     var sortTimeTakenMilliseconds = Date.now() - sortStartTime;
     console.log(`Sort Time Taken ${sortTimeTakenMilliseconds / 1000}s`);
     return arrayToSort;
+  }
+
+  filterRows(callingElement) {
+    // Declare variables
+    console.log(callingElement);
+    var input, filter, i, j, columnIndex, shouldAdd;
+    columnIndex = parseInt(callingElement.parentElement.dataset.columnIndex);
+    input = callingElement.value;
+    filter = input.toUpperCase();
+    this.filterValues[columnIndex] = filter;
+    console.log(`filter: ${filter}, columnIndex: ${columnIndex}`);
+    var filteredRows = [];
+    var columnsToCheck = [];
+
+    for (i = 0; i < this.filterValues.length; i++) {
+      var value = this.filterValues[i]
+      if (value == undefined) {
+        continue;
+      }
+      columnsToCheck.push([value, i]);
+    }
+  
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < this.parsedRowData.length; i++) {
+
+      shouldAdd = true;
+
+      for (j = 0; j < columnsToCheck.length; j++) {
+        columnIndex = columnsToCheck[j][1];
+        var filterValue = columnsToCheck[j][0];
+
+        value = this.parsedRowData[i][columnIndex + 1];
+
+        if (value.toString().toUpperCase().indexOf(filterValue) == -1) {
+          shouldAdd = false;
+          break;
+        }
+      }
+
+      if (shouldAdd) {
+        filteredRows.push(this.parsedRowData[i]);
+      }
+
+    }
+
+    this.filteredRows = filteredRows;
+    this.updateRowsNew(this.rowIndex);
+
   }
 
 }
