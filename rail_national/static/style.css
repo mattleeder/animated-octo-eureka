@@ -118,6 +118,26 @@ table.schedule th {
     text-align: center;
     background-color: #04AA6D;
     color: white;
+    height: 75px;
+}
+
+table.schedule th span {
+    position: absolute;
+    top: 10%;
+    left: 0px;
+    width: 100%;
+}
+
+table.schedule th input {
+    position: relative;
+    top: 0%;
+}
+
+table.schedule th button {
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, 0%);
 }
 
 .input-icons i {
@@ -146,6 +166,7 @@ table.schedule th {
     background-repeat: no-repeat;
     padding: 2px 0px 0px 25px;
     white-space: nowrap;
+    border-radius: 4px;
 }
 
 .content { 
