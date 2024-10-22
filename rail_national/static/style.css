@@ -80,6 +80,27 @@ hr {
     color: white;
 }
 
+.dropdown-button {
+    width: 100%;
+}
+
+.active-dropdown-button {
+    background-color: #555;
+    color: white;
+}
+
+.dropdown-container {
+    position: relative;
+    display: none;
+    width: 100%;
+}
+
+.dropdown-container span {
+    display: inline-block;
+    position: relative;
+    left: 5%;
+}
+
 table.schedule {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;

@@ -17,6 +17,12 @@
             {% endif %}
             <li><a href="{{ url_for('index') }}">Schedule</a>
             <li><a href="{{ url_for('virtualised_table.index') }}">Virtualised Table Test</a>
+            <li class="dropdown-button"><a>Dropdown</a></li>
+            <div class="dropdown-container">
+                <li><a><span>Link 1</span></a></li>
+                <li><a><span>Link 2</span></a></li>
+                <li><a><span>Link 3</span></a></li>
+            </div>
         </ul>
     </nav>
 </header>
@@ -29,3 +35,18 @@
         {% endfor %}
         {% block content %}{% endblock %}
 </section>
+<script>
+var dropdownButtons = document.getElementsByClassName("dropdown-button");
+
+for (var i = 0; i < dropdownButtons.length; i++) {
+    dropdownButtons[i].addEventListener("click", function() {
+        this.classList.toggle("active-dropdown-button");
+        var dropdownContent = this.nextElementSibling;
+        if (dropdownContent.style.display == "block") {
+            dropdownContent.style.display = "none";
+        } else {
+            dropdownContent.style.display = "block";
+        }
+    });
+}
+</script>
