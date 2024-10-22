@@ -26,14 +26,18 @@ hr {
 }
 
 .navbar-header {
+    position: fixed;
     background: lightgray; 
-    width: 20%;
+    width: 10%;
     height: 100%;
-    position: absolute;
     left: 0;
     margin: 0;
     padding: 0;
     top: 0;
+}
+
+.navbar-header h1 {
+    margin-left: 14px;
 }
 
 .navbar { 
@@ -43,13 +47,6 @@ hr {
     position: relative;
     left: 0;
     top: 0;
-}
-
-.navbar h1 {
-    display: block;
-    width: 100%;
-    padding: 0 0.5rem;
-    text-align: center;
 }
 
 .navbar ul {
@@ -173,7 +170,7 @@ table.schedule th button {
     padding: 0 1rem 1rem; 
     position: absolute;
     top: 0;
-    left: 20%;
+    left: 10%;
 }
 
 .content > header {
