@@ -105,6 +105,8 @@ table.schedule tr:hover {
 }
 
 table.schedule th {
+    position: sticky;
+    top: 0;
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: center;
@@ -182,6 +184,13 @@ table.schedule th {
     background-position: bottom, top;
     width: 10%;
     top: -5px;
+}
+
+.virtual-table {
+    overflow-x: auto;
+    overflow-y: scroll;
+    height: 100vh;
+    width: 100%;
 }
 
 .flash { margin: 1em 0; padding: 1em; background: #cae6f6; border: 1px solid #377ba8; }

@@ -185,6 +185,7 @@ class VirtualisedTable {
   // Extract the html for the rows from the table and put in into a template
   // Wrap the original table in a div with overflow
   // And provide the ids of the table, the template and the number of elements to be in the dom
+  // var virtualTable = new VirtualisedTable("tableID", "templateID", 15);
 
   // Optimisations:
   //  - Preprocess all string data for filtering, i.e. when loading data in set to uppercase, strip whitespace etc.
@@ -192,6 +193,17 @@ class VirtualisedTable {
   //  - If adding filter, only need to loop over already filtered rows
   //  - Could handle filtering with binary values, each column has a certain power of 2, when filtering
   //    increase the filter value for that row by this power of 2, only add rows where this value is 0 i.e. unfiltered
+  //  - Should be a way to only add and remove the rows needed instead of replacing everything. This was tried
+  //    and I had problems with the row count increasing beyond the numberOfElementsToRender limit.
+
+  // Problems:
+  //  - If rows are not all same height calculations will be incorrect. Could fix by adding all data into table
+  //    and recording the height of rows. Could be done by adding a single row and writing data directly into it
+  //    then recording the height.
+
+  // TODO:
+  //  - Test with smaller data.
+  //  - Test with no data.
 
 
 

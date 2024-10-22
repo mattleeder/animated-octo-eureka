@@ -10,7 +10,7 @@
 {% block content %}
 <script defer src="{{ url_for('static', filename='javascript/schedule/search.js') }}"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100&icon_names=favorite,home,search,settings" rel="stylesheet"/>
-<div style="overflow-x: auto; overflow-y: auto; height: 550px; width: 1200px;">
+<div class="virtual-table">
     <table id="schedule" class="schedule" data-sort-order="">
         <thead>
             <tr>
@@ -65,7 +65,7 @@
     let virtualTable = null;
     window.onload = (event) => {
         console.log("page is fully loaded");
-        virtualTable = new VirtualisedTable("schedule", "schedule-data-storage", 15);
+        virtualTable = new VirtualisedTable("schedule", "schedule-data-storage", 25);
     };
     var tableRowData = [];
     {% for route in schedule %}
