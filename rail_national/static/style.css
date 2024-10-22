@@ -99,6 +99,7 @@ hr {
     display: inline-block;
     position: relative;
     left: 5%;
+    height: fit-content;
 }
 
 table.schedule {
