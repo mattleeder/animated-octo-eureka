@@ -10,15 +10,15 @@
         <ul>
             {% if g.user %}
                 <li><span>{{ g.user["username"] }}</span>
-                <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
-                <li><a href="{{ url_for('schedule.add_route') }}">Add Route</a>
+                <li><a href="{{ url_for('auth.logout') }}"><span>Log Out</span></a>
+                <li><a href="{{ url_for('schedule.add_route') }}"><span>Add Route</span></a>
             {% else %}
-                <li><a href="{{ url_for('auth.register') }}">Register</a>
-                <li><a href="{{ url_for('auth.login') }}">Log In</a>
+                <li><a href="{{ url_for('auth.register') }}"><span>Register</span></a>
+                <li><a href="{{ url_for('auth.login') }}"><span>Log In</span></a>
             {% endif %}
-            <li><a href="{{ url_for('index') }}">Schedule</a>
-            <li><a href="{{ url_for('virtualised_table.index') }}">Virtualised Table Test</a>
-            <li class="dropdown-button"><a>Dropdown</a></li>
+            <li><a href="{{ url_for('index') }}"><span>Schedule</span></a>
+            <li><a href="{{ url_for('virtualised_table.index') }}"><span>Virtualised Table Test</span></a>
+            <li class="dropdown-button"><a><span>Dropdown</span></a></li>
             <li class="dropdown-container"><ul>
                 <li><a><span>Link 1</span></a></li>
                 <li><a><span>Link 2</span></a></li>
