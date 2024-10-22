@@ -179,44 +179,62 @@ function swapInnerHTML() {
 }
 
 class VirtualisedTable {
+
+  // Class to create tables that dynamically add their data to the DOM
+  // All data should be provided up front via a template
+  // Extract the html for the rows from the table and put in into a template
+  // Wrap the original table in a div with overflow
+  // And provide the ids of the table, the template and the number of elements to be in the dom
+
+  // Optimisations:
+  //  - Preprocess all string data for filtering, i.e. when loading data in set to uppercase, strip whitespace etc.
+  //  - Only check filter columns that have changed
+  //  - If adding filter, only need to loop over already filtered rows
+  //  - Could handle filtering with binary values, each column has a certain power of 2, when filtering
+  //    increase the filter value for that row by this power of 2, only add rows where this value is 0 i.e. unfiltered
+
+
+
   constructor(tableID, rowDataTableTemplateID, numberOfElementsToRender) {
     console.log("Creating Virtualised Table");
-    this.tableID = tableID;
-    this.rowDataTemplateID = rowDataTableTemplateID;
-    this.template = document.getElementById(rowDataTableTemplateID);
-    this.clone = this.template.content.cloneNode(true);
-    this.tableRowData = this.clone.children[0].rows;
-    this.numberOfElementsToRender = numberOfElementsToRender;
-    this.sizeOfVirtualisedList = this.tableRowData.length;
-    if (this.numberOfElementsToRender > this.sizeOfVirtualisedList) {
-      throw new Error("Not enough elements in list!");
-    }
+    
     this.table = document.getElementById(tableID);
-    this.rowHeight = 84.4;
+    this.template = document.getElementById(rowDataTableTemplateID);
+    this.numberOfElementsToRender = numberOfElementsToRender;
+    this.tableBody = this.table.getElementsByTagName("tbody")[0];
+
+    var clone = this.template.content.cloneNode(true);
+    this.tableRowData = clone.children[0].rows;
+    
+    this.rowHeight = 0; // Will get set to proper height by initialise
     this.scrollTop = 0;
     this.rowIndex = 0;
-    this.lowestIndexToRender = 0;
-    this.greatestIndexToRender = (numberOfElementsToRender - 1);
+
+    // These control the space above and below the "rendered" elements
     this.scrollUpControllerRow = document.createElement("tr");
     this.scrollDownControllerRow = document.createElement("tr");
+
+    // Set up array for column filters
+    this.filterValues = Array.apply(null, Array(this.table.getElementsByTagName("th").length)).map(function () {});
+    
+    // Get column types
+    this.columnTypes = this._getColumnTypes();
+    this.parsedRowData = this._getRowData();
+    this.filteredRows = [...this.parsedRowData];
+    
+    this.initialise();
+    console.log("Initialised");
+
+    // Scroll event listener
     this.table.parentElement.onscroll = (event) => {
       console.log(`Scrolled: ${this.table.parentElement.scrollTop - this.scrollTop}px`);
       this.scrollTop = this.table.parentElement.scrollTop;
       var newRowIndex = Math.floor(this.scrollTop / this.rowHeight);
       if (newRowIndex != this.rowIndex) {
-        this.updateRowsNew(newRowIndex);
+        this.updateRows(newRowIndex);
         this.rowIndex = newRowIndex;
-        }
-      console.log(this.scrollTop);
+      }
     }
-    this.filterValues = Array.apply(null, Array(this.table.getElementsByTagName("th").length)).map(function () {});
-    this.tableBody = this.table.getElementsByTagName("tbody")[0];
-    this.columnTypes = this._getColumnTypes();
-    this.parsedRowData = this._getRowData();
-    this.filteredRows = [...this.parsedRowData];
-    console.log("Parsed data");
-    this.initialise();
-    console.log("Initialised");
   }
 
   _getColumnTypes() {
@@ -231,12 +249,14 @@ class VirtualisedTable {
   _getRowData() {
     var rowData = [];
 
+    // Set up parse function lookup
     var columnTypeParseFunctionLookup = new Map()
     columnTypeParseFunctionLookup.set("INTEGER", parseInt);
     columnTypeParseFunctionLookup.set("DATE", Date.parse);
 
+    // For each row, loop over columns and parse data with function if provided, else add data as is
     for (var i = 0; i < this.tableRowData.length; i++) {
-      currentRowData = [this.tableRowData[i]];
+      var currentRowData = [this.tableRowData[i]];
       var currentRow = this.tableRowData[i].getElementsByTagName("td");
 
       for (var j = 0; j < currentRow.length; j++) {
@@ -254,40 +274,51 @@ class VirtualisedTable {
     return rowData;
   }
 
-  initialise() {
-    this.tableBody.append(this.scrollUpControllerRow);
-    this.scrollUpControllerRow.style.height = "0px";
-    for (i = this.lowestIndexToRender; i <= this.greatestIndexToRender; i++) {
-      this.tableBody.append(this.filteredRows[i][0].cloneNode(true));
-    }
-    this.tableBody.append(this.scrollDownControllerRow);
-    var heightOfMissingRows = (this.sizeOfVirtualisedList - (this.greatestIndexToRender - this.lowestIndexToRender)) * this.rowHeight;
-    this.scrollDownControllerRow.style.height = `${heightOfMissingRows}px`;
-    this.setInitialFilterValues();
-    this.filterRows();
-    this.updateRowsNew(this.rowIndex);
-  }
-
-  updateRowsNew(newRowIndex) {
-    // Add elements to display + 5 on each side
-    console.log(`New row index: ${newRowIndex}`);
-    
-    var newLowestIndexToRender = Math.max(newRowIndex- 5, 0);
+  getLowestAndGreatestIndexToRender(rowIndex) {
+    var newLowestIndexToRender = Math.max(rowIndex - 5, 0);
     var newGreatestIndexToRender = Math.min(newLowestIndexToRender + this.numberOfElementsToRender - 1, this.filteredRows.length - 1);
     newLowestIndexToRender = Math.max(Math.min(newLowestIndexToRender, newGreatestIndexToRender - this.numberOfElementsToRender + 1), 0);
 
-    var indexTracker = newLowestIndexToRender;
+    return {"lowestIndexToRender" : newLowestIndexToRender, "greatestIndexToRender" : newGreatestIndexToRender};
+  }
+
+  initialise() {
+    var { lowestIndexToRender, greatestIndexToRender } = this.getLowestAndGreatestIndexToRender(this.rowIndex);
+
+    // Add top controller row
+    this.tableBody.append(this.scrollUpControllerRow);
+    this.scrollUpControllerRow.style.height = "0px";
+    
+    // Add initial rows, these will get replaced by updateRows
+    for (i = lowestIndexToRender; i <= greatestIndexToRender; i++) {
+      this.tableBody.append(this.filteredRows[i][0].cloneNode(true));
+    }
+    // Get row height, will mess up if no data available
+    this.rowHeight = this.tableBody.children[1].getBoundingClientRect()["height"];
+    console.log(`Row height: ${this.rowHeight}`);
+    
+    // Add bottom controller row
+    this.tableBody.append(this.scrollDownControllerRow);
+    var heightOfMissingRows = (this.tableRowData.length - (greatestIndexToRender - lowestIndexToRender)) * this.rowHeight;
+    this.scrollDownControllerRow.style.height = `${heightOfMissingRows}px`;
+
+    // Read in any filter values, then filter and update rows
+    this.setInitialFilterValues();
+    this.filterRows();
+    this.updateRows(this.rowIndex);
+  }
+
+  updateRows(newRowIndex) {
+    console.log(`New row index: ${newRowIndex}`);
+    
+    var { lowestIndexToRender : newLowestIndexToRender, greatestIndexToRender : newGreatestIndexToRender } = this.getLowestAndGreatestIndexToRender(newRowIndex);
     console.log(`New lowest index to render: ${newLowestIndexToRender}`);
     console.log(`New greatest index to render: ${newGreatestIndexToRender}`);
     
-    indexTracker = 0;
+    // Replace the children with cloned nodes from the filtered row data
     for (i = 1; i < this.tableBody.children.length - 1; i++) {
       var idx = newLowestIndexToRender + i - 1;
-      console.log(`Index Tracker: ${idx}`);
       this.tableBody.replaceChild(this.filteredRows[idx][0].cloneNode(true), this.tableBody.children[i]);
-      indexTracker += 1;
-      console.log(`Num loops: ${indexTracker}`);
-      console.log(`Max i: ${this.tableBody.children.length - 2}`);
     }
 
     var numRowsMissingAbove = newLowestIndexToRender;
@@ -361,7 +392,7 @@ class VirtualisedTable {
     sortOrder.reverse();
     
     this.multiDimensionalSort(this.filteredRows, sortOrder);
-    this.updateRowsNew(this.rowIndex);
+    this.updateRows(this.rowIndex);
     var functionMillisecondsPassed = Date.now() - functionStartTime;
     console.log(`Time taken for function: ${functionMillisecondsPassed / 1000}s`);
     }
@@ -390,7 +421,6 @@ class VirtualisedTable {
 
   updateFilterValues(callingElement) {
     // Declare variables
-    console.log(callingElement);
     var input, filter,columnIndex;
     columnIndex = parseInt(callingElement.parentElement.dataset.columnIndex);
     input = callingElement.value;
@@ -405,6 +435,7 @@ class VirtualisedTable {
     var filteredRows = [];
     var columnsToCheck = [];
 
+    // Get filter values and add them to array, alongside their column index
     for (i = 0; i < this.filterValues.length; i++) {
       var value = this.filterValues[i]
       if (value == undefined) {
@@ -418,9 +449,9 @@ class VirtualisedTable {
 
       shouldAdd = true;
 
+      // Check all columns that have filter values
       for (j = 0; j < columnsToCheck.length; j++) {
-        columnIndex = columnsToCheck[j][1];
-        var filterValue = columnsToCheck[j][0];
+        var [filterValue, columnIndex] = columnsToCheck[j];
 
         value = this.parsedRowData[i][columnIndex + 1];
 
@@ -438,7 +469,7 @@ class VirtualisedTable {
 
     this.filteredRows = filteredRows;
     this.updateNumberOfRowsRendered();
-    this.updateRowsNew(this.rowIndex);
+    this.updateRows(this.rowIndex);
 
   }
 

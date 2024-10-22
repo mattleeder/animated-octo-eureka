@@ -65,7 +65,7 @@
     let virtualTable = null;
     window.onload = (event) => {
         console.log("page is fully loaded");
-        virtualTable = new VirtualisedTable("schedule", "schedule-data-storage", 25);
+        virtualTable = new VirtualisedTable("schedule", "schedule-data-storage", 15);
     };
     var tableRowData = [];
     {% for route in schedule %}
