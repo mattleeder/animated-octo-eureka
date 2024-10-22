@@ -297,6 +297,14 @@ class VirtualisedTable {
   initialise() {
     var { lowestIndexToRender, greatestIndexToRender } = this.getLowestAndGreatestIndexToRender(this.rowIndex);
 
+    // Add cells to controller rows for html compliance
+    var emptyTd = document.createElement("td");
+    emptyTd.style.display = "none";
+    for (i = 0; i < this.columnTypes.length; i++) {
+      this.scrollUpControllerRow.appendChild(emptyTd.cloneNode(true));
+      this.scrollDownControllerRow.appendChild(emptyTd.cloneNode(true));
+    }
+
     // Add top controller row
     this.tableBody.append(this.scrollUpControllerRow);
     this.scrollUpControllerRow.style.height = "0px";

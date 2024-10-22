@@ -70,26 +70,5 @@
         console.log("page is fully loaded");
         virtualTable = new VirtualisedTable("schedule", "schedule-data-storage", 25);
     };
-    var tableRowData = [];
-    {% for route in schedule %}
-
-        var currentRowData = [];
-        currentRowData.push(`{{ route["route_id"] }}`);
-        currentRowData.push(`{{ route["origin_stn"] }}`);
-        currentRowData.push(`{{ route["destn_stn"] }}`);
-        currentRowData.push(`{{ route["stop_stn"] }}`);
-        currentRowData.push(`{{ route["origin_dep_time"] }}`);
-        currentRowData.push(`{{ route["destn_arr_time"] }}`);
-        currentRowData.push(`{{ route["stop_time"] }}`);
-        currentRowData.push(`{{ route["cancelled"] }}`);
-        currentRowData.push(`<a href="{{ url_for('schedule.update_route', route_id = route['route_id']) }}">Update Route</a>`);
-        currentRowData.push(`
-        <form action="{{ url_for('schedule.delete', route_id = route['route_id']) }}" method="post">
-            <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
-        </form>`
-        );
-        tableRowData.push(currentRowData);
-
-    {% endfor %}
 </script>
 {% endblock %}
