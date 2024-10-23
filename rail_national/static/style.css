@@ -62,23 +62,20 @@ hr {
     padding: 8px 16px;
 }
 
-/* Any active navbar link */
-.navbar ul li.active a, .navbar ul li.active a span {
+/* Any active top level navbar link */
+.navbar > ul > li.active a, .navbar > ul > li.active > a > span {
     background-color: #04AA6D;
     color: #ffffff;
 }
 
-/* Hovering over inactive links */
-.navbar ul li:not(.active) a:hover {
+/* Any active top level navbar dropdown button */
+.navbar > ul > li.active a, .navbar > ul > li.active-dropdown-button > a > span {
     background-color: #555;
     color: #ffffff;
 }
 
-.dropdown-button {
-    width: 100%;
-}
-
-.active-dropdown-button {
+/* Hovering over inactive links */
+.navbar > ul > li:not(.active) > a:hover, .navbar > ul > li:not(.active) > a:hover > span {
     background-color: #555;
     color: #ffffff;
 }
@@ -113,14 +110,26 @@ hr {
 }
 
 /* Any active dropdown link */
-.dropdown-container ul li.active a, .navbar ul li.active a span {
+.dropdown-container > ul > li.active > a, .dropdown-container > ul > li.active > a > span {
     background-color: #04AA6D;
     color: #ffffff;
 }
 
 /* Hovering over inactive dropdown links */
-.dropdown-container ul li:not(.active) a:hover {
+.dropdown-container > ul > li:not(.active) > a:hover, .dropdown-container > ul > li:not(.active) > a:hover > span {
     background-color: #555;
+    color: #ffffff;
+}
+
+.dropdown-button {
+    width: 100%;
+}
+
+.active-dropdown-button {
+    background-color: #555;
+}
+
+.active-dropdown-button span {
     color: #ffffff;
 }
 
