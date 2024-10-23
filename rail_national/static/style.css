@@ -125,14 +125,6 @@ hr {
     width: 100%;
 }
 
-.active-dropdown-button {
-    background-color: #555;
-}
-
-.active-dropdown-button span {
-    color: #ffffff;
-}
-
 table.schedule {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
