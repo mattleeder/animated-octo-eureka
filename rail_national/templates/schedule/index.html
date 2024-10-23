@@ -8,8 +8,8 @@
 {% endblock %}
 
 {% block content %}
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 <script defer src="{{ url_for('static', filename='javascript/schedule/search.js') }}"></script>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100&icon_names=favorite,home,search,settings" rel="stylesheet"/>
 <div class="virtual-table">
     <table id="schedule" class="schedule" data-sort-order="">
         <thead>
