@@ -47,11 +47,10 @@ for (var i = 0; i < dropdownButtons.length; i++) {
         // Toggle visibility
         this.classList.toggle("active-dropdown-button");
         var dropdownContent = this.nextElementSibling;
-        if (dropdownContent.style.display == "block") {
-            dropdownContent.style.display = "none";
-        } else {
-            dropdownContent.style.display = "block";
-        }
+
+        console.log("Checking height");
+        console.log(dropdownContent);
+        dropdownContent.classList.toggle("dropdown-container-visible");
 
         // Toggle icon
         var svgIcon = this.getElementsByTagName("svg")[0];

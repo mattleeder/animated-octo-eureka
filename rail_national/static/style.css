@@ -69,7 +69,7 @@ hr {
 }
 
 /* Any active top level navbar dropdown button */
-.navbar > ul > li.active a, .navbar > ul > li.active-dropdown-button > a > span {
+.navbar > ul > li.active-dropdown-button a, .navbar > ul > li.active-dropdown-button > a > span {
     background-color: #555;
     color: #ffffff;
 }
@@ -85,8 +85,14 @@ hr {
 /* Dropdown container */
 .dropdown-container {
     position: relative;
-    display: none;
     width: 100%;
+    overflow: hidden;
+    height: 0px;
+    transition: height 1s;
+}
+
+.dropdown-container-visible {
+    height: 100px;
 }
 
 /* List underneath dropdown */
