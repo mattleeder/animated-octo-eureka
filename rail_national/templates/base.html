@@ -17,7 +17,7 @@
                 <li><a href="{{ url_for('auth.login') }}"><span>Log In</span></a>
             {% endif %}
             <li><a href="{{ url_for('index') }}"><span>Schedule</span></a>
-            <li class="dropdown-button"><a><span>Dropdown</span></a></li>
+            <li class="dropdown-button"><a><span>Dropdown <svg style="float: right; top: 50%; transform: translateY(-10%);" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg></span></a></li>
             <li class="dropdown-container"><ul>
                 <li><a><span>Link 1</span></a></li>
                 <li><a><span>Link 2</span></a></li>
@@ -36,10 +36,15 @@
         {% block content %}{% endblock %}
 </section>
 <script>
-var dropdownButtons = document.getElementsByClassName("dropdown-button");
+const svgPlusIcon = `<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>`;
+const svgMinusIcon = `<path d="M200-440v-80h560v80H200Z"/>`;
 
+var dropdownButtons = document.getElementsByClassName("dropdown-button");
 for (var i = 0; i < dropdownButtons.length; i++) {
+    dropdownButtons[i].dataset.iconState = 0;
     dropdownButtons[i].addEventListener("click", function() {
+
+        // Toggle visibility
         this.classList.toggle("active-dropdown-button");
         var dropdownContent = this.nextElementSibling;
         if (dropdownContent.style.display == "block") {
@@ -47,7 +52,20 @@ for (var i = 0; i < dropdownButtons.length; i++) {
         } else {
             dropdownContent.style.display = "block";
         }
+
+        // Toggle icon
+        var svgIcon = this.getElementsByTagName("svg")[0];
+        console.log(svgIcon);
+        if (this.dataset.iconState == 0) {
+            svgIcon.innerHTML = svgMinusIcon;
+            this.dataset.iconState = 1;
+        } else {
+            svgIcon.innerHTML = svgPlusIcon;
+            this.dataset.iconState = 0;
+        }
     });
 }
+
+
 </script>
 </html>
