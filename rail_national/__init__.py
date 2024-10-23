@@ -36,8 +36,5 @@ def create_app(test_config = None):
     from . import schedule
     app.register_blueprint(schedule.bp)
     app.add_url_rule("/", endpoint = "index")
-
-    from . import virtualised_table
-    app.register_blueprint(virtualised_table.bp)
     
     return app
