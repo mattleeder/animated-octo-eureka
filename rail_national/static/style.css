@@ -7,7 +7,7 @@ html {
 body { 
     max-width: 960px; 
     margin: 0 auto; 
-    background: white;
+    background: #ffffff;
 }
 
 h1 { 
@@ -22,61 +22,56 @@ a {
 
 hr { 
     border: none; 
-    border-top: 1px solid lightgray; 
+    border-top: 1px solid #d3d3d3; 
 }
 
+/* NAVBAR */
+
+/* Navbar Outer Container */
 .navbar-header {
     position: fixed;
-    background: lightgray; 
+    background: #d3d3d3; 
     width: 10%;
     height: 100%;
     left: 0;
-    margin: 0;
-    padding: 0;
     top: 0;
 }
 
-.navbar-header h1 {
+/* Navbar Title */
+.navbar-header > h1 {
     margin-left: 14px;
 }
 
-.navbar { 
-    background: lightgray; 
-    display: flex; 
-    align-items: top;
-    position: relative;
-    left: 0;
-    top: 0;
-}
-
-.navbar ul {
+/* Top level navbar list container*/
+.navbar > ul {
     list-style-type: none;
-    margin: 0;
     padding: 0;
     width: 100%;
 }
 
-.navbar ul li a {
+/* Top level navbar links */
+.navbar > ul > li > a {
     display: block;
-    color: black;
     text-decoration: none;
 }
 
-.navbar ul li span {
+/* Text within top level navbar links */
+.navbar > ul > li > a > span {
     display: block;
-    color: black;
+    color: #000000;
     padding: 8px 16px;
-    text-decoration: none;
 }
 
-.navbar ul li.active a {
+/* Any active navbar link */
+.navbar ul li.active a, .navbar ul li.active a span {
     background-color: #04AA6D;
-    color: white;
+    color: #ffffff;
 }
 
+/* Hovering over inactive links */
 .navbar ul li:not(.active) a:hover {
     background-color: #555;
-    color: white;
+    color: #ffffff;
 }
 
 .dropdown-button {
@@ -85,19 +80,48 @@ hr {
 
 .active-dropdown-button {
     background-color: #555;
-    color: white;
+    color: #ffffff;
 }
 
+/* DROPDOWN CONTAINER IN NAVBAR */
+
+/* Dropdown container */
 .dropdown-container {
     position: relative;
     display: none;
     width: 100%;
 }
 
-.dropdown-container span {
-    display: inline-block;
-    position: relative;
-    left: 5%;
+/* List underneath dropdown */
+.dropdown-container  > ul {
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+}
+
+/* Links in list */
+.dropdown-container  > ul > li > a {
+    display: block;
+    text-decoration: none;
+}
+
+/* Text within links */
+.dropdown-container > ul > li > a > span {
+    display: block;
+    color: #000000;
+    padding: 8px 32px;
+}
+
+/* Any active dropdown link */
+.dropdown-container ul li.active a, .navbar ul li.active a span {
+    background-color: #04AA6D;
+    color: #ffffff;
+}
+
+/* Hovering over inactive dropdown links */
+.dropdown-container ul li:not(.active) a:hover {
+    background-color: #555;
+    color: #ffffff;
 }
 
 table.schedule {
@@ -134,7 +158,7 @@ table.schedule th {
     padding-bottom: 12px;
     text-align: center;
     background-color: #04AA6D;
-    color: white;
+    color: #ffffff;
     height: 75px;
 }
 
@@ -194,7 +218,7 @@ table.schedule th button {
 }
 
 .content > header {
-    border-bottom: 1px solid lightgray;
+    border-bottom: 1px solid #d3d3d3;
     display: flex;
     align-items: flex-end;
 }
@@ -241,7 +265,7 @@ table.schedule th button {
 .post > header { display: flex; align-items: flex-end; font-size: 0.85em; }
 .post > header > div:first-of-type { flex: auto; }
 .post > header h1 { font-size: 1.5em; margin-bottom: 0; }
-.post .about { color: slategray; font-style: italic; }
+.post .about { color: #708090; font-style: italic; }
 .post .body { white-space: pre-line; }
 .content:last-child { margin-bottom: 0; }
 .content form { margin: 1em 0; display: flex; flex-direction: column; }
