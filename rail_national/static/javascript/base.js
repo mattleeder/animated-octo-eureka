@@ -40,10 +40,11 @@ for (var i = 0; i < dropdownButtons.length; i++) {
         var originalTransitionDuration = window.getComputedStyle(dropDownContainer).transitionDuration;
         dropDownContainer.style.transitionDuration = "0s";
         dropDownContainer.classList.toggle("dropdown-container-visible");
-        console.log(`Original transition duration ${originalTransitionDuration}`);
+
+        // Set the transition duration back to the original
         var activeDropdownContainer = dropDownContainer;
+        // TODO Is there a better way of doing this?
         setTimeout(() => {
-            console.log(activeDropdownContainer);
             activeDropdownContainer.style.transitionDuration = originalTransitionDuration;
         }, 50);
 
