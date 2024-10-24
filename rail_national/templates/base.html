@@ -80,7 +80,9 @@ for (var i = 0; i < dropdownContainers.length; i++) {
     for (var j = 0; j < aTags.length; j++) {
         if (aTags[j].href == currentURL) {
             aTags[j].className += " active";
+            dropdownContainers[i].classList.toggle("dropdown-container");
             dropdownContainers[i].style.height = "100px";
+            dropdownContainers[i].classList.toggle("dropdown-container");
             dropdownContainers[i].classList.toggle("dropdown-container-visible");
         }
     }
