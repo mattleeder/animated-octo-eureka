@@ -28,6 +28,7 @@ for (var i = 0; i < listItems.length; i++) {
 const svgPlusIcon = `<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>`;
 const svgMinusIcon = `<path d="M200-440v-80h560v80H200Z"/>`;
 
+// Find and highlight active (current) link in navbar
 var dropdownButtons = document.getElementsByClassName("dropdown-button");
 for (var i = 0; i < dropdownButtons.length; i++) {
 
