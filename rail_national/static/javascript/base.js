@@ -35,13 +35,16 @@ for (var i = 0; i < dropdownButtons.length; i++) {
     // Check if dropdown has active link
     var dropDownContainer = dropdownButtons[i].nextElementSibling;
     if (dropDownContainer.getElementsByClassName("active").length > 0) {
-
+      
         // Toggle the active state without the transition period
-        var originalTransitionDuration = dropDownContainer.style.transitionDuration;
+        var originalTransitionDuration = window.getComputedStyle(dropDownContainer).transitionDuration;
         dropDownContainer.style.transitionDuration = "0s";
         dropDownContainer.classList.toggle("dropdown-container-visible");
+        console.log(`Original transition duration ${originalTransitionDuration}`);
+        var activeDropdownContainer = dropDownContainer;
         setTimeout(() => {
-            dropDownContainer.style.transitionDuration = originalTransitionDuration;
+            console.log(activeDropdownContainer);
+            activeDropdownContainer.style.transitionDuration = originalTransitionDuration;
         }, 50);
 
         // Draw the correct icon and set to the correct state
