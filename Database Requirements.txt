@@ -1,3 +1,10 @@
+What can a customer lookup:
+    
+    - Journeys from A to B, specifying stops, dates, times, railcards, passenger numbers, allowed change time, direct
+    - Disruptions
+    - Live departures and arrivals, show delays
+
+
 Columns Needed:
 
 - Route Start
@@ -10,3 +17,48 @@ Columns Needed:
 - Is Delayed? How much?
 - Disruptions / Alerts
 - Scheduled Times and Live Times
+
+
+TABLES
+
+
+Routes
+
+    - Route ID
+
+Join to Stops on Route ID
+
+Stops
+
+    - Stop ID
+    - Route ID
+    - Stop STN
+    - Stop Time
+    - Stop Number (Could figure out from count/time) (Min stop is start of route, max stop is end of route)
+
+Join to Routes on Route ID
+Join to Delays on Stop ID
+
+Delays
+
+    - Stop ID
+    - Expected arrival time
+    - Reason
+
+Join to Stops on Stop ID
+
+Cancellations
+
+    - Route ID
+    - Terminating Station
+    - Cancellation Reason
+
+Alerts
+
+    - Alert Information
+    - Alert Start STN (Affected graph segments instead)
+    - Alert End STN
+
+Network
+
+Stored as some kind of graph sql
