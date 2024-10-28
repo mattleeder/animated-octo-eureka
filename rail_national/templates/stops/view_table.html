@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block header %}
+    <h1>{% block title %}Stops{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+<script defer src="{{ url_for('static', filename='javascript/search.js') }}"></script>
+<div class="virtual-table">
+    <table id="schedule" class="schedule" data-sort-order="">
+        <thead>
+            <tr>
+                <th data-column-index="0" data-column-type="{{ column_types['stop_id'] }}"><span>Stop ID</span><input type="text" id="myInput" class="myInput" onkeyup="virtualTable.updateFilterValues(this);" placeholder="Search for Route No.."><button data-sort-state="0" class="sort-button-both" onclick="virtualTable.columnMultiSort(this);"></button></th>
+                <th data-column-index="1" data-column-type="{{ column_types['route_id'] }}"><span>Route ID</span><input type="text" id="myInput" class="myInput" onkeyup="virtualTable.updateFilterValues(this);" placeholder="Search for Origin Station.."><button data-sort-state="0" class="sort-button-both" onclick="virtualTable.columnMultiSort(this);"></button></th>
+                <th data-column-index="2" data-column-type="{{ column_types['stop_stn'] }}"><span>Stop Station</span><input type="text" id="myInput" class="myInput" onkeyup="virtualTable.updateFilterValues(this);" placeholder="Search for Destination Station.."><button data-sort-state="0" class="sort-button-both" onclick="virtualTable.columnMultiSort(this);"></button></th>
+                <th data-column-index="3" data-column-type="{{ column_types['scheduled_arrival_time'] }}"><span>Scheduled Arrival Time</span><input type="text" id="myInput" class="myInput" onkeyup="virtualTable.updateFilterValues(this);" placeholder="Search for Stop Station.."><button data-sort-state="0" class="sort-button-both" onclick="virtualTable.columnMultiSort(this);"></button></th>
+                <th data-column-index="4" data-column-type="{{ column_types['scheduled_departure_time'] }}"><span>Scheduled Departure Time</span><input type="text" id="myInput" class="myInput" onkeyup="virtualTable.updateFilterValues(this);" placeholder="Search for Origin Departure Time.."><button data-sort-state="0" class="sort-button-both" onclick="virtualTable.columnMultiSort(this);"></button></th>
+            </tr>
+        </thead>
+        <tbody style="overflow-y: scroll;">
+            <!-- Rows added here -->
+        </tbody>
+    </table>
+</div>
+
+<template id="schedule-data-storage">
+
+    <table>
+        
+        {% for stop in stops %}
+
+            <tr data-columns-hiding-this-row="00000000">
+                <td>{{ stop["stop_id"] }}</td>
+                <td>{{ stop["route_id"] }}</td>
+                <td>{{ stop["stop_stn"] }}</td>
+                <td>{{ stop["scheduled_arrival_time"] }}</td>
+                <td>{{ stop["scheduled_departure_time"] }}</td>
+            </tr>
+
+        {% endfor %}
+
+    </table>
+
+</template>
+
+<script>
+    let virtualTable = null;
+    window.onload = (event) => {
+        console.log("page is fully loaded");
+        virtualTable = new VirtualisedTable("schedule", "schedule-data-storage", 50);
+    };
+</script>
+{% endblock %}

@@ -90,6 +90,28 @@ def get_column_types_from_table(table):
 
     return column_types
 
+# # # # # # # # # # # # # # # # # # # # # # # # # #
+#                                                 #
+# STOPS                                           #
+#                                                 #
+# # # # # # # # # # # # # # # # # # # # # # # # # #
+
+
+def get_stops():
+    db = get_db()
+    stops = db.execute(
+        """
+        SELECT stop_id,
+               route_id,
+               stop_stn,
+               strftime('%Y-%m-%d %H:%M', DATETIME(scheduled_arrival_time, 'unixepoch')) as scheduled_arrival_time,
+               strftime('%Y-%m-%d %H:%M', DATETIME(scheduled_departure_time, 'unixepoch')) as scheduled_departure_time
+          FROM stops
+         ORDER BY scheduled_departure_time DESC;
+        """
+    ).fetchall()
+    return stops
+
 def insert_stop(route_id, stop_stn, scheduled_arrival_time, scheduled_departure_time):
 
     assert len(stop_stn) == 3

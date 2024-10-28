@@ -36,5 +36,8 @@ def create_app(test_config = None):
     from . import schedule
     app.register_blueprint(schedule.bp)
     app.add_url_rule("/", endpoint = "index")
+
+    from . import stops
+    app.register_blueprint(stops.bp)
     
     return app
