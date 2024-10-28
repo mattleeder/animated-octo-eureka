@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block header %}
+    <h1>{% block title %}Find A Journey{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+<script defer src="{{ url_for('static', filename='javascript/find_a_journey.js') }}"></script>
+<input type="text" id="journey-start-input" class="myInput" placeholder="Journey Start..">
+<input type="text" id="journey-end-input" class="myInput" placeholder="Journey End..">
+              
+{% endblock %}

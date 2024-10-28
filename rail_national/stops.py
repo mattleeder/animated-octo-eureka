@@ -9,18 +9,8 @@ import rail_national.queries as queries
 
 from . import utilities
 
-bp = Blueprint("stops", __name__, url_prefix = "/auth")
+bp = Blueprint("stops", __name__, url_prefix = "/stops")
 
-def get_route(route_id, check_permissions = False):
-    route = queries.get_route(route_id)
-
-    if route is None:
-        abort(404, f"Route id {route_id} doesn't exist.")
-
-    if check_permissions:
-        abort(403)
-
-    return route
 
 @bp.route("/view_table")
 def view_table():

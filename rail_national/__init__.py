@@ -39,5 +39,8 @@ def create_app(test_config = None):
 
     from . import stops
     app.register_blueprint(stops.bp)
+
+    from . import find_a_journey
+    app.register_blueprint(find_a_journey.bp)
     
     return app
