@@ -303,7 +303,9 @@ def get_n_fastest_journeys(start_station, target_station, journey_start_time : d
 
     output.sort(key = lambda x : x[2])
 
-    return output
+    json_output = [{"route": route, "route_ids": route_ids, "arrival_time" : arrival_time} for route, route_ids, arrival_time in output]
+
+    return json_output
         
 def new_get_number_of_stops_along_route(route_id):
     # Get Number of stops

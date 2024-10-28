@@ -7,7 +7,34 @@
 {% block content %}
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 <script defer src="{{ url_for('static', filename='javascript/find_a_journey.js') }}"></script>
-<input type="text" id="journey-start-input" class="myInput" placeholder="Journey Start..">
-<input type="text" id="journey-end-input" class="myInput" placeholder="Journey End..">
+
+<form action="" method="get">
+    <label for="journey-start-input">Journey Start</label>
+    <input type="text" id="journey-start-input" name="journey-start-input" class="myInput" placeholder="Journey Start.." value="{{ request.args.get('journey-start-input', '') }}" required>
+    <label for="journey-end-input">Journey End</label>
+    <input type="text" id="journey-end-input" name="journey-end-input" class="myInput" placeholder="Journey End.." value="{{ request.args.get('journey-end-input', '') }}" required>
+    <label for="journey-departure-time">Journey Start Time</label>
+    <input type="datetime-local" id="journey-departure-time" name="journey-departure-time" value="{{ request.args.get('journey-departure-time', '') }}" required>
+    <input type="submit" id="journey-search-submit" onclick="getNFastestJourneys();">
+</form>
+
+{% if journeys %}
+    <table>
+        <thead>
+            <th>Route</th>
+            <th>Route IDs</th>
+            <th>Arrival Time</th>
+        </thead>
+        <tbody>    
+    {% for journey in journeys %}
+            <tr>
+                <td>{{ journey["route"] }}</td>
+                <td>{{ journey["route_ids"] }}</td>
+                <td>{{ journey["arrival_time"] }}</td>
+            </tr>
+    {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
               
 {% endblock %}
