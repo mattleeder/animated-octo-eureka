@@ -1,5 +1,6 @@
 from .db import get_db
 from sqlite3 import IntegrityError
+from datetime import datetime, timedelta
 
 def get_route(route_id):
     route = get_db().execute("""
@@ -110,23 +111,13 @@ def insert_stop(route_id, stop_stn, scheduled_arrival_time, scheduled_departure_
             case _:
                 return False, f"Operation Failed."
             
-# ONLY HERE FOR TESTING PURPOSES
-def new_db_query():
-    route_search_parameters = [{"start_stn" : "BBB", "leave_time" : "15:00", "target_stn" : "BDC", "current_route" : "BBB"}]
-    initial_placeholders = [x[key] for x in route_search_parameters for key in ["start_stn", "leave_time", "current_route"]]
-    output = []
-    min_time = "23:59"
-    used_route_placeholders = []
-    query_placeholders = initial_placeholders + used_route_placeholders
-    loop_idx = 1
-    max_arrival_rank = 1
-    MAX_ALLOWED_CHANGES = 100
-    while loop_idx <= MAX_ALLOWED_CHANGES:
+# NOT READY FOR USE YET
+def get_n_fastest_journeys(start_station, target_station, journey_start_time : datetime, number_of_journeys):
     #         if len(used_route_placeholders) > 0:
     #         query = f"""
     # WITH initial(start_stn, leave_time, current_route) as (
 
-    #             VALUES {",".join(["(?,?,?)"] * (len(initial_placeholders) // 3))}
+    #             VALUES {",".join(["(?,?,?,?)"] * (len(initial_placeholders) // 3))}
 
     #     ),
     #         used_routes(route_id) as (
@@ -190,6 +181,15 @@ def new_db_query():
     #     WHERE r.arrival_rank = 1
     #         """
 
+    initial_placeholders = [start_station, int(journey_start_time.timestamp()), start_station, ""]
+    output = []
+    min_time = int((journey_start_time + timedelta(hours = 24)).timestamp())
+    used_route_placeholders = []
+    query_placeholders = initial_placeholders + used_route_placeholders + [min_time]
+    loop_idx = 1
+    MAX_ALLOWED_CHANGES = 100
+    while loop_idx <= MAX_ALLOWED_CHANGES:
+
         if len(used_route_placeholders) > 0:
             used_routes_cte = f"""
             used_routes(route_id) as (
@@ -206,27 +206,28 @@ def new_db_query():
 
         initial_cte = f"""
 
-        WITH initial(start_stn, leave_time, current_route) as (
+        WITH initial(start_stn, leave_time, current_route, current_route_ids) as (
 
-                VALUES {",".join(["(?,?,?)"] * (len(initial_placeholders) // 3))}
+                VALUES {",".join(["(?,?,?,?)"] * (len(initial_placeholders) // 4))}
 
         ),"""
 
         inter_and_reachable_cte = """
             inter as (
 
-                SELECT DISTINCT ds.route_id, i.start_stn, i.current_route
-                FROM dummy_stops as ds
+                SELECT DISTINCT ds.route_id, i.start_stn, i.current_route, i.current_route_ids
+                FROM stops as ds
                 INNER JOIN initial as i
                     ON i.start_stn = ds.stop_stn
                     AND i.leave_time <= ds.scheduled_departure_time
+                    AND ds.scheduled_departure_time < ?
 
         ),
 
             reachable as (
 
-                SELECT inter.start_stn, s.stop_stn, s.route_id, inter.current_route || ',' || s.stop_stn as current_route, s.scheduled_arrival_time, row_number() OVER (PARTITION BY s.stop_stn ORDER BY scheduled_arrival_time) as arrival_rank
-                FROM dummy_stops as s
+                SELECT inter.start_stn, s.stop_stn, s.route_id, inter.current_route || ',' || s.stop_stn as current_route, inter.current_route_ids || s.route_id || ',' as current_route_ids, s.scheduled_arrival_time, row_number() OVER (PARTITION BY s.stop_stn ORDER BY scheduled_arrival_time) as arrival_rank
+                FROM stops as s
                 INNER JOIN inter
                     ON inter.route_id = s.route_id
                     """
@@ -237,7 +238,7 @@ def new_db_query():
 
         SELECT r.*
         FROM reachable as r
-        WHERE r.arrival_rank <= {max_arrival_rank};
+        WHERE r.arrival_rank <= {number_of_journeys};
         """
 
         query = "".join([initial_cte, used_routes_cte, inter_and_reachable_cte, used_routes_condition, query_tail])
@@ -263,8 +264,8 @@ def new_db_query():
         for row in res[::-1]:
             idx -= 1
             used_route_placeholders.append(row["route_id"])
-            if row["stop_stn"] == route_search_parameters[0]["target_stn"]:
-                output.append([row["current_route"], row["scheduled_arrival_time"]])
+            if row["stop_stn"] == target_station:
+                output.append([row["current_route"], row["current_route_ids"], datetime.fromtimestamp(row["scheduled_arrival_time"])])
                 min_time = min(min_time, row["scheduled_arrival_time"])
                 res.pop(idx)
             elif row["scheduled_arrival_time"] >= min_time:
@@ -273,10 +274,14 @@ def new_db_query():
         if len(res) == 0:
             break
         
-        initial_placeholders = [x[key] for x in res for key in ["stop_stn", "scheduled_arrival_time", "current_route"]]
-        query_placeholders = initial_placeholders + used_route_placeholders
+        initial_placeholders = [x[key] for x in res for key in ["stop_stn", "scheduled_arrival_time", "current_route", "current_route_ids"]]
+        query_placeholders = initial_placeholders + used_route_placeholders + [min_time]
 
         loop_idx += 1
+
+    output.sort(key = lambda x : x[2])
+
+    return output
         
 def new_get_number_of_stops_along_route(route_id):
     # Get Number of stops
