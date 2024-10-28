@@ -88,6 +88,12 @@ def get_column_types_from_table(table):
     if "stop_time" in column_types:
         column_types["stop_time"] = "DATE"
 
+    if "scheduled_arrival_time" in column_types:
+        column_types["scheduled_arrival_time"] = "DATE"
+
+    if "scheduled_departure_time" in column_types:
+        column_types["scheduled_departure_time"] = "DATE"
+
     return column_types
 
 # # # # # # # # # # # # # # # # # # # # # # # # # #
