@@ -18,6 +18,7 @@ class searchBarWithSuggestions {
 
     createSearchBar() {
         this.searchBar = document.createElement("input");
+        this.searchBar.classList.add("searchbar-with-suggestions-input")
         this.searchBar.onkeyup = () => {
             console.log(this);
             console.log(`Searchbar value: ${this.searchBar.value}`);
@@ -50,10 +51,8 @@ class searchBarWithSuggestions {
 
         parent.classList.add("searchbar-suggestion-dropdown");
 
-        var section = document.getElementsByTagName("section")[0];
-        section.appendChild(fragment);
+        this.searchBarContainer.appendChild(fragment);
 
-        this.parent = section;
         this.dropdown = parent;
         this.list = list;
         this.dropdownExists = true;
@@ -61,7 +60,7 @@ class searchBarWithSuggestions {
 
     destroyDropdown() {
         if (this.dropdownExists) {
-            this.parent.removeChild(this.dropdown);
+            this.searchBarContainer.removeChild(this.dropdown);
             this.dropdownExists = false;
         }
     }

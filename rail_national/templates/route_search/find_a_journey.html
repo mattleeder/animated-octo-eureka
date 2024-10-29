@@ -16,7 +16,7 @@
     <label for="journey-departure-time">Journey Start Time</label>
     <input type="datetime-local" id="journey-departure-time" name="journey-departure-time" value="{{ request.args.get('journey-departure-time', '') }}" required>
     <input type="submit" id="journey-search-submit" onclick="getNFastestJourneys();">
-    <div id="searchBarTest"></div>
+    <div id="searchBarTest" class="searchbar-with-suggestions-container"></div>
 </form>
 
 {% if journeys %}

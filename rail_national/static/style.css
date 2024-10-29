@@ -25,6 +25,20 @@ hr {
     border-top: 1px solid #d3d3d3; 
 }
 
+.flash { margin: 1em 0; padding: 1em; background: #cae6f6; border: 1px solid #377ba8; }
+.post > header { display: flex; align-items: flex-end; font-size: 0.85em; }
+.post > header > div:first-of-type { flex: auto; }
+.post > header h1 { font-size: 1.5em; margin-bottom: 0; }
+.post .about { color: #708090; font-style: italic; }
+.post .body { white-space: pre-line; }
+.content:last-child { margin-bottom: 0; }
+.content form { margin: 1em 0; display: flex; flex-direction: column; }
+.content label { font-weight: bold; margin-bottom: 0.5em; }
+.content input, .content textarea { margin-bottom: 1em; }
+.content textarea { min-height: 12em; resize: vertical; }
+input.danger { color: #ff5d5d; }
+input[type=submit] { align-self: start; min-width: 10em; }
+
 /* NAVBAR */
 
 /* Navbar Outer Container */
@@ -269,6 +283,15 @@ table.schedule th button {
     width: 85vw;
 }
 
+.searchbar-with-suggestions-container {
+    display: flex;
+    flex-direction: column;
+}
+
+input.searchbar-with-suggestions-input {
+    margin-bottom: 0;
+}
+
 .searchbar-suggestion-dropdown {
     display: block;
     background-color: #ffffff;
@@ -295,17 +318,3 @@ table.schedule th button {
     cursor: pointer;
     background-color: #e37705;
 }
-
-.flash { margin: 1em 0; padding: 1em; background: #cae6f6; border: 1px solid #377ba8; }
-.post > header { display: flex; align-items: flex-end; font-size: 0.85em; }
-.post > header > div:first-of-type { flex: auto; }
-.post > header h1 { font-size: 1.5em; margin-bottom: 0; }
-.post .about { color: #708090; font-style: italic; }
-.post .body { white-space: pre-line; }
-.content:last-child { margin-bottom: 0; }
-.content form { margin: 1em 0; display: flex; flex-direction: column; }
-.content label { font-weight: bold; margin-bottom: 0.5em; }
-.content input, .content textarea { margin-bottom: 1em; }
-.content textarea { min-height: 12em; resize: vertical; }
-input.danger { color: #ff5d5d; }
-input[type=submit] { align-self: start; min-width: 10em; }
