@@ -18,7 +18,7 @@ class searchBarWithSuggestions {
 
     createSearchBar() {
         this.searchBar = document.createElement("input");
-        this.searchBar.classList.add("searchbar-with-suggestions-input")
+        this.searchBar.classList.add("searchbar-with-suggestions-input");
         this.searchBar.onkeyup = () => {
             console.log(this);
             console.log(`Searchbar value: ${this.searchBar.value}`);
@@ -78,12 +78,12 @@ class searchBarWithSuggestions {
             var listElement = document.createElement("li");
             listElement.classList.add("searchbar-suggestion");
             listElement.textContent = this.filteredSuggestions[i];
-            listElement.onclick = () => {
-                this.searchBar.value = this.filteredSuggestions[i];
-                this.destroyDropdown();
+            var searchBarInstance = this;
+            listElement.onclick = function () {
+                searchBarInstance.searchBar.value = this.textContent;
+                searchBarInstance.destroyDropdown();
             }
             this.list.appendChild(listElement);
-            console.log(`Appending: ${this.filteredSuggestions[i]}`);
         }
     }
 
