@@ -13,11 +13,12 @@ class searchBarWithSuggestions {
         this.maxNumberOfSuggestionsDisplayed = maxNumberOfSuggestionsDisplayed;
         this.dropdownExists = false;
         this.dropdown = null;
-        this.createSearchBar();
+        this.attachSearchBar();
     }
 
-    createSearchBar() {
-        this.searchBar = document.createElement("input");
+    attachSearchBar() {
+        console.log(this.searchBarContainer);
+        this.searchBar = this.searchBarContainer.getElementsByTagName("input")[0];
         this.searchBar.classList.add("searchbar-with-suggestions-input");
         this.searchBar.onkeyup = () => {
             console.log(this);
@@ -74,11 +75,11 @@ class searchBarWithSuggestions {
     populateDropdown() {
         this.clearDropdown();
         var maxSuggestions = Math.min(this.maxNumberOfSuggestionsDisplayed, this.filteredSuggestions.length);
+        var searchBarInstance = this;
         for (var i = 0; i < maxSuggestions; i++) {
             var listElement = document.createElement("li");
             listElement.classList.add("searchbar-suggestion");
             listElement.textContent = this.filteredSuggestions[i];
-            var searchBarInstance = this;
             listElement.onclick = function () {
                 searchBarInstance.searchBar.value = this.textContent;
                 searchBarInstance.destroyDropdown();

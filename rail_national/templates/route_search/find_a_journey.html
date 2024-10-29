@@ -8,15 +8,18 @@
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 <script defer src="{{ url_for('static', filename='javascript/find_a_journey.js') }}"></script>
 
-<form action="" method="get">
+<form autocomplete="off" action="" method="get">
     <label for="journey-start-input">Journey Start</label>
-    <input type="text" id="journey-start-input" name="journey-start-input" class="myInput" placeholder="Journey Start.." value="{{ request.args.get('journey-start-input', '') }}" required>
+    <div id="journey-start-search-bar-with-suggestions" class="searchbar-with-suggestions-container">
+        <input type="text" id="journey-start-input" name="journey-start-input" class="myInput" placeholder="Journey Start.." value="{{ request.args.get('journey-start-input', '') }}" required>
+    </div>
     <label for="journey-end-input">Journey End</label>
-    <input type="text" id="journey-end-input" name="journey-end-input" class="myInput" placeholder="Journey End.." value="{{ request.args.get('journey-end-input', '') }}" required>
+    <div id="journey-end-search-bar-with-suggestions" class="searchbar-with-suggestions-container">
+        <input type="text" id="journey-end-input" name="journey-end-input" class="myInput" placeholder="Journey End.." value="{{ request.args.get('journey-end-input', '') }}" required>
+    </div>
     <label for="journey-departure-time">Journey Start Time</label>
     <input type="datetime-local" id="journey-departure-time" name="journey-departure-time" value="{{ request.args.get('journey-departure-time', '') }}" required>
     <input type="submit" id="journey-search-submit" onclick="getNFastestJourneys();">
-    <div id="searchBarTest" class="searchbar-with-suggestions-container"></div>
 </form>
 
 {% if journeys %}
@@ -39,7 +42,6 @@
 {% endif %}
 
 <script defer>
-    let searchBar = null;
     let suggestionsArray =  [
                              "AAA", "BBB", "CCC", "DDD", "EEE",
                              "ABC", "ABB", "ABA", "ACA", "ACB", 
@@ -52,7 +54,8 @@
 
     window.onload = (event) => {
         console.log("page is fully loaded");
-        searchBar = new searchBarWithSuggestions(suggestionsArray, "searchBarTest", 5);
+        let journeyStartSearchBar = new searchBarWithSuggestions(suggestionsArray, "journey-start-search-bar-with-suggestions", 5);
+        let journeyEndSearchBar = new searchBarWithSuggestions(suggestionsArray, "journey-end-search-bar-with-suggestions", 5);
     };
 </script>
               
