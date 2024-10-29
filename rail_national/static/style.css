@@ -269,6 +269,33 @@ table.schedule th button {
     width: 85vw;
 }
 
+.searchbar-suggestion-dropdown {
+    display: block;
+    background-color: #ffffff;
+    height: fit-content;
+    width: inherit;
+    border-radius: 4px;
+    box-shadow: rgba(29, 29, 31, 0.498) 0px 3px 9px 0px;
+    list-style: none;
+}
+
+.searchbar-suggestion-dropdown > ul {
+    padding: 0;
+}
+
+.searchbar-suggestion {
+    display: block;
+    position: relative;
+    text-decoration: none;
+    width: 100%;
+    text-align: left;
+}
+
+.searchbar-suggestion:hover {
+    cursor: pointer;
+    background-color: #e37705;
+}
+
 .flash { margin: 1em 0; padding: 1em; background: #cae6f6; border: 1px solid #377ba8; }
 .post > header { display: flex; align-items: flex-end; font-size: 0.85em; }
 .post > header > div:first-of-type { flex: auto; }

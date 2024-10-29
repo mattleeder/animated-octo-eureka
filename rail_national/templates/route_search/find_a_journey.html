@@ -16,6 +16,7 @@
     <label for="journey-departure-time">Journey Start Time</label>
     <input type="datetime-local" id="journey-departure-time" name="journey-departure-time" value="{{ request.args.get('journey-departure-time', '') }}" required>
     <input type="submit" id="journey-search-submit" onclick="getNFastestJourneys();">
+    <div id="searchBarTest"></div>
 </form>
 
 {% if journeys %}
@@ -36,5 +37,23 @@
         </tbody>
     </table>
 {% endif %}
+
+<script defer>
+    let searchBar = null;
+    let suggestionsArray =  [
+                             "AAA", "BBB", "CCC", "DDD", "EEE",
+                             "ABC", "ABB", "ABA", "ACA", "ACB", 
+                             "ACC", "ADA", "ADB", "ADC", "BCA", 
+                             "BCB", "BCC", "BDA", "BDB", "BDC", 
+                             "BEA", "BEB", "BEC", "CEA", "CEB", 
+                             "CEC", "DEA", "DEB", "DEC"
+                             ];
+    suggestionsArray.sort();
+
+    window.onload = (event) => {
+        console.log("page is fully loaded");
+        searchBar = new searchBarWithSuggestions(suggestionsArray, "searchBarTest", 5);
+    };
+</script>
               
 {% endblock %}

@@ -6,22 +6,38 @@ function getNFastestJourneys() {
 
 class searchBarWithSuggestions {
 
-    constructor(suggestionsEndpoint, maxNumberOfSuggestionsDisplayed) {
-        this.suggestionsEndpoint = suggestionsEndpoint;
+    constructor(suggestionsArray, searchBarContainerID, maxNumberOfSuggestionsDisplayed) {
+        this.suggestions = suggestionsArray;
+        this.filteredSuggestions = [...suggestionsArray];
+        this.searchBarContainer = document.getElementById(searchBarContainerID);
         this.maxNumberOfSuggestionsDisplayed = maxNumberOfSuggestionsDisplayed;
         this.dropdownExists = false;
         this.dropdown = null;
-        this.suggestions = [];
+        this.createSearchBar();
     }
 
     createSearchBar() {
+        this.searchBar = document.createElement("input");
+        this.searchBar.onkeyup = () => {
+            console.log(this);
+            console.log(`Searchbar value: ${this.searchBar.value}`);
 
-    }
+            // If no text, destroy dropdown
+            if (this.searchBar.value == "") {
+                this.destroyDropdown();
+                return;
+            }
 
-    attachOnKeyUpListener(targetForListener) {
-        targetForListener.onkeyup = function() {
+            // If dropdown doesnt exists, create it
+            if (!this.dropdownExists) {
+                this.createDropdown();
+            }
 
+            // Populate the dropdown
+            this.filterSuggestions();
+            this.populateDropdown();
         }
+        this.searchBarContainer.appendChild(this.searchBar);
     }
 
     createDropdown() {
@@ -32,9 +48,7 @@ class searchBarWithSuggestions {
         parent.appendChild(list);
         fragment.appendChild(parent);
 
-        parent.style.backgroundColor = "#ffffff";
-        parent.style.height = "300px";
-        parent.style.width = "300px";
+        parent.classList.add("searchbar-suggestion-dropdown");
 
         var section = document.getElementsByTagName("section")[0];
         section.appendChild(fragment);
@@ -52,10 +66,6 @@ class searchBarWithSuggestions {
         }
     }
 
-    resizeDropdown() {
-
-    }
-
     clearDropdown() {
         while (this.list.firstChild) {
             this.list.removeChild(this.list.lastChild);
@@ -63,20 +73,34 @@ class searchBarWithSuggestions {
     }
 
     populateDropdown() {
-        var maxSuggestions = Math.min(this.maxNumberOfSuggestionsDisplayed, this.suggestions.length);
+        this.clearDropdown();
+        var maxSuggestions = Math.min(this.maxNumberOfSuggestionsDisplayed, this.filteredSuggestions.length);
         for (var i = 0; i < maxSuggestions; i++) {
             var listElement = document.createElement("li");
-            listElement.textContent = this.suggestions[i];
+            listElement.classList.add("searchbar-suggestion");
+            listElement.textContent = this.filteredSuggestions[i];
+            listElement.onclick = () => {
+                this.searchBar.value = this.filteredSuggestions[i];
+                this.destroyDropdown();
+            }
             this.list.appendChild(listElement);
-            console.log(`Appending: ${this.suggestions[i]}`);
+            console.log(`Appending: ${this.filteredSuggestions[i]}`);
         }
     }
 
-    getSuggestions() {
-        this.suggestions = ["a", "b", "c"];
+    filterSuggestions() {
+        this.filteredSuggestions.length = 0; // Clear array
+        for (var i = 0; i < this.suggestions.length; i++) {
+            if (this.suggestions[i].toUpperCase().startsWith(this.searchBar.value.toUpperCase())) {
+                this.filteredSuggestions.push(this.suggestions[i]);
+            }
+        }
     }
 
     checkInitialData() {
+        if (this.searchBar.value == "") {
+            return;
+        }
 
     }
 
