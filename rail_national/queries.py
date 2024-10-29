@@ -323,3 +323,12 @@ def new_get_number_of_stops_along_route(route_id):
     """,
     (route_id)).fetchall()
     return res
+
+def get_all_stations():
+    res = get_db().execute(
+    """
+    SELECT stop_stn
+      FROM stops;
+    """
+    ).fetchall()
+    return res
