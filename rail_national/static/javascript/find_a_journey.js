@@ -58,6 +58,9 @@ class searchBarWithSuggestions {
         this.list = list;
         this.dropdownExists = true;
         this.searchBar.classList.toggle("active");
+        window.onclick = () => {
+            this.destroyDropdown();
+        }
     }
 
     destroyDropdown() {
