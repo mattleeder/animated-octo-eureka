@@ -338,7 +338,11 @@ class VirtualisedTable {
     // Replace the children with cloned nodes from the filtered row data
     for (i = 1; i < this.tableBody.children.length - 1; i++) {
       var idx = newLowestIndexToRender + i - 1;
-      this.tableBody.replaceChild(this.filteredRows[idx][0].cloneNode(true), this.tableBody.children[i]);
+      var newRow = this.filteredRows[idx][0].cloneNode(true);
+      if (idx % 2 == 0) {
+        newRow.style.backgroundColor = "#f2f2f2";
+      }
+      this.tableBody.replaceChild(newRow, this.tableBody.children[i]);
     }
 
     var numRowsMissingAbove = newLowestIndexToRender;

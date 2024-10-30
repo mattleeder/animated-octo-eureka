@@ -165,9 +165,9 @@ table.schedule td {
     padding: 8px;
 }
 
-table.schedule tr:nth-child(even){
+/*table.schedule tr:nth-child(even){
     background-color: #f2f2f2;
-}
+}*/
 
 table.schedule tr:hover {
     background-color: #ddd;
