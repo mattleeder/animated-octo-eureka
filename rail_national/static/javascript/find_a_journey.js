@@ -57,12 +57,14 @@ class searchBarWithSuggestions {
         this.dropdown = parent;
         this.list = list;
         this.dropdownExists = true;
+        this.searchBar.classList.toggle("active");
     }
 
     destroyDropdown() {
         if (this.dropdownExists) {
             this.searchBarContainer.removeChild(this.dropdown);
             this.dropdownExists = false;
+            this.searchBar.classList.toggle("active");
         }
     }
 

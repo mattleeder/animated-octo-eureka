@@ -290,28 +290,40 @@ table.schedule th button {
 
 input.searchbar-with-suggestions-input {
     margin-bottom: 0;
+    background-color: #ffffff;
+    padding-bottom: 4px;
+    border: 1.6px solid black;
+}
+
+input.searchbar-with-suggestions-input.active {
+    border-bottom: white;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
 }
 
 .searchbar-suggestion-dropdown {
-    display: block;
     background-color: #ffffff;
-    height: fit-content;
-    width: inherit;
-    border-radius: 4px;
-    box-shadow: rgba(29, 29, 31, 0.498) 0px 3px 9px 0px;
-    list-style: none;
+    border-radius: 0px 0px 4px 4px;
+    box-shadow: rgba(29, 29, 31, 0.498) 0px 9px 9px 0px;
+    border-left: 1.6px solid black;
+    border-right: 1.6px solid black;
+    border-bottom: 1.6px solid black;
 }
 
 .searchbar-suggestion-dropdown > ul {
     padding: 0;
+    margin: 0;
 }
 
 .searchbar-suggestion {
+    --border-radius: 4px;
     display: block;
-    position: relative;
-    text-decoration: none;
-    width: 100%;
-    text-align: left;
+    padding: var(--border-radius);
+}
+
+.searchbar-suggestion:last-of-type {
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
 }
 
 .searchbar-suggestion:hover {
