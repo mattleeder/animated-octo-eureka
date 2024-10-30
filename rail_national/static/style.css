@@ -286,6 +286,11 @@ table.schedule th button {
 .searchbar-with-suggestions-container {
     display: flex;
     flex-direction: column;
+    border-radius: 4px;
+}
+
+.searchbar-with-suggestions-container.active {
+    box-shadow: rgba(29, 29, 31, 0.498) 0px 3px 9px 0px;
 }
 
 input.searchbar-with-suggestions-input {
@@ -304,7 +309,6 @@ input.searchbar-with-suggestions-input.active {
 .searchbar-suggestion-dropdown {
     background-color: #ffffff;
     border-radius: 0px 0px 4px 4px;
-    box-shadow: rgba(29, 29, 31, 0.498) 0px 9px 9px 0px;
     border-left: 1.6px solid black;
     border-right: 1.6px solid black;
     border-bottom: 1.6px solid black;

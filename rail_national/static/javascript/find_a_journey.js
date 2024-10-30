@@ -29,6 +29,11 @@ class searchBarWithSuggestions {
                 this.destroyDropdown();
                 return;
             }
+            
+            this.filterSuggestions();
+            if (this.filteredSuggestions.length == 0) {
+                return;
+            }
 
             // If dropdown doesnt exists, create it
             if (!this.dropdownExists) {
@@ -36,7 +41,6 @@ class searchBarWithSuggestions {
             }
 
             // Populate the dropdown
-            this.filterSuggestions();
             this.populateDropdown();
         }
         this.searchBarContainer.appendChild(this.searchBar);
@@ -58,6 +62,7 @@ class searchBarWithSuggestions {
         this.list = list;
         this.dropdownExists = true;
         this.searchBar.classList.toggle("active");
+        this.searchBarContainer.classList.toggle("active");
         window.onclick = () => {
             this.destroyDropdown();
         }
@@ -68,6 +73,7 @@ class searchBarWithSuggestions {
             this.searchBarContainer.removeChild(this.dropdown);
             this.dropdownExists = false;
             this.searchBar.classList.toggle("active");
+            this.searchBarContainer.classList.toggle("active");
         }
     }
 
@@ -100,13 +106,6 @@ class searchBarWithSuggestions {
                 this.filteredSuggestions.push(this.suggestions[i]);
             }
         }
-    }
-
-    checkInitialData() {
-        if (this.searchBar.value == "") {
-            return;
-        }
-
     }
 
 }
