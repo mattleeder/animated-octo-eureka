@@ -209,7 +209,7 @@ def get_n_fastest_journeys(start_station, target_station, journey_start_time : d
     #     WHERE r.arrival_rank = 1
     #         """
 
-    initial_placeholders = [start_station, int(journey_start_time.timestamp()), start_station, ""]
+    initial_placeholders = [start_station, int(journey_start_time.timestamp()), start_station, "", "", ""]
     output = []
     min_time = int((journey_start_time + timedelta(hours = 24)).timestamp())
     used_route_placeholders = []
@@ -234,16 +234,16 @@ def get_n_fastest_journeys(start_station, target_station, journey_start_time : d
 
         initial_cte = f"""
 
-        WITH initial(start_stn, leave_time, current_route, current_route_ids) as (
+        WITH initial(start_stn, leave_time, current_route, current_route_ids, departure_times, arrival_times) as (
 
-                VALUES {",".join(["(?,?,?,?)"] * (len(initial_placeholders) // 4))}
+                VALUES {",".join(["(?,?,?,?,?,?)"] * (len(initial_placeholders) // 6))}
 
         ),"""
 
         inter_and_reachable_cte = """
             inter as (
 
-                SELECT DISTINCT ds.route_id, i.start_stn, i.current_route, i.current_route_ids
+                SELECT DISTINCT ds.route_id, i.start_stn, i.current_route, i.current_route_ids, i.departure_times || ds.scheduled_departure_time || ',' as departure_times, i.arrival_times
                 FROM stops as ds
                 INNER JOIN initial as i
                     ON i.start_stn = ds.stop_stn
@@ -254,7 +254,7 @@ def get_n_fastest_journeys(start_station, target_station, journey_start_time : d
 
             reachable as (
 
-                SELECT inter.start_stn, s.stop_stn, s.route_id, inter.current_route || ',' || s.stop_stn as current_route, inter.current_route_ids || s.route_id || ',' as current_route_ids, s.scheduled_arrival_time, row_number() OVER (PARTITION BY s.stop_stn ORDER BY scheduled_arrival_time) as arrival_rank
+                SELECT inter.start_stn, s.stop_stn, s.route_id, inter.current_route || ',' || s.stop_stn as current_route, inter.current_route_ids || s.route_id || ',' as current_route_ids, s.scheduled_arrival_time, inter.departure_times, inter.arrival_times || s.scheduled_arrival_time || ',' as arrival_times, row_number() OVER (PARTITION BY s.stop_stn ORDER BY scheduled_arrival_time) as arrival_rank
                 FROM stops as s
                 INNER JOIN inter
                     ON inter.route_id = s.route_id
@@ -293,7 +293,7 @@ def get_n_fastest_journeys(start_station, target_station, journey_start_time : d
             idx -= 1
             used_route_placeholders.append(row["route_id"])
             if row["stop_stn"] == target_station:
-                output.append([row["current_route"], row["current_route_ids"], datetime.fromtimestamp(row["scheduled_arrival_time"])])
+                output.append([row["current_route"], row["current_route_ids"], row["scheduled_arrival_time"], row["departure_times"], row["arrival_times"]])
                 min_time = min(min_time, row["scheduled_arrival_time"])
                 res.pop(idx)
             elif row["scheduled_arrival_time"] >= min_time:
@@ -302,14 +302,14 @@ def get_n_fastest_journeys(start_station, target_station, journey_start_time : d
         if len(res) == 0:
             break
         
-        initial_placeholders = [x[key] for x in res for key in ["stop_stn", "scheduled_arrival_time", "current_route", "current_route_ids"]]
+        initial_placeholders = [x[key] for x in res for key in ["stop_stn", "scheduled_arrival_time", "current_route", "current_route_ids", "departure_times", "arrival_times"]]
         query_placeholders = initial_placeholders + used_route_placeholders + [min_time]
 
         loop_idx += 1
 
     output.sort(key = lambda x : x[2])
 
-    json_output = [{"route": route, "route_ids": route_ids, "arrival_time" : arrival_time} for route, route_ids, arrival_time in output]
+    json_output = [{"route": route, "route_ids": route_ids, "arrival_time" : arrival_time, "departure_times": departure_times, "arrival_times": arrival_times} for route, route_ids, arrival_time, departure_times, arrival_times in output]
 
     return json_output
         

@@ -23,18 +23,18 @@
 </form>
 
 {% if journeys %}
-    <table>
+    <table id="find-a-journey-results" class="schedule">
         <thead>
             <th>Route</th>
-            <th>Route IDs</th>
-            <th>Arrival Time</th>
+            <th>Departure Times</th>
+            <th>Arrival Times</th>
         </thead>
         <tbody>    
     {% for journey in journeys %}
             <tr>
                 <td>{{ journey["route"] }}</td>
-                <td>{{ journey["route_ids"] }}</td>
-                <td>{{ journey["arrival_time"] }}</td>
+                <td>{{ journey["departure_times"] }}</td>
+                <td>{{ journey["arrival_times"] }}</td>
             </tr>
     {% endfor %}
         </tbody>
@@ -51,6 +51,51 @@
                              "CEC", "DEA", "DEB", "DEC"
                              ];
     suggestionsArray.sort();
+    {% if journeys %}
+    var journeyData = JSON.parse('{{ journeys | tojson | safe }}');
+    var parsedRowData = [];
+
+    for (var i = 0; i < journeyData.length; i++) {
+        var rowData = journeyData[i];
+        var route = rowData["route"].split(",");
+        var departure_times = rowData["departure_times"].split(",").slice(0, -1).map((a) => {
+            var unixTime = parseInt(a);
+            var datetime = new Date(unixTime * 1000);
+            var time = new Intl.DateTimeFormat('en-GB', {
+                dateStyle: 'short',
+                timeStyle: 'short',
+                timeZone: 'Europe/London',
+              }).format(datetime);
+              return time;
+        });
+        var arrival_times = rowData["arrival_times"].split(",").slice(0, -1).map((a) => {
+            var unixTime = parseInt(a);
+            var datetime = new Date(unixTime * 1000);
+            var time = new Intl.DateTimeFormat('en-GB', {
+                dateStyle: 'short',
+                timeStyle: 'short',
+                timeZone: 'Europe/London',
+              }).format(datetime);
+              return time;
+        });
+        var parsedRow = {
+            "route": route,
+            "departure_times": departure_times,
+            "arrival_times": arrival_times,
+        };
+        parsedRowData.push(parsedRow);
+    }
+
+    console.log(parsedRowData);
+
+    var journeyTable = document.getElementById("find-a-journey-results");
+    for (var i = 0; i < parsedRowData.length; i++) {
+        journeyTable.rows[i + 1].cells[0].textContent = parsedRowData[i]["route"].join("\n");
+        journeyTable.rows[i + 1].cells[1].textContent = parsedRowData[i]["departure_times"].join("\n");
+        journeyTable.rows[i + 1].cells[2].textContent = parsedRowData[i]["arrival_times"].join("\n");
+    }
+
+    {% endif %}
 
     window.onload = (event) => {
         console.log("page is fully loaded");
